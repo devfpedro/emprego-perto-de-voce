@@ -10,5 +10,6 @@ TRUNCATE TABLE
     empresas,
     candidatos,
     usuarios,
-    localidades
+    bairros,
+    cidades
 RESTART IDENTITY CASCADE;

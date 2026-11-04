@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    container_name: emprego-perto-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: emprego_perto_de_voce
+      POSTGRES_USER: emprego_user
+      POSTGRES_PASSWORD: emprego_dev_123
+    ports:
+      - "5433:5432"
+    volumes:
+      - emprego_perto_data:/var/lib/postgresql/data
+
+volumes:
+  emprego_perto_data:
