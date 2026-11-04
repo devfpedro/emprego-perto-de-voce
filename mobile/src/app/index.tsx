@@ -6,4 +6,4 @@ export default function Index() {
 }
 
 // Esse arquivo serve como a primeira tela ou ponto de redirecionamento ao abrir o aplicativo. 
-// Ele pode direcionar o  usuário para a tela de login ou verificar se já existe uma sessão ativa.
+// usuário para a tela de login ou verificar se já existe uma sessão ativa.
