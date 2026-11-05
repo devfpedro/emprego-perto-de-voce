@@ -26,3 +26,4 @@ def listar_localidades():
         return jsonify(cidades), 200
     except Exception:
         return jsonify({'erro': 'Erro interno ao buscar localidades.'}), 500
+    

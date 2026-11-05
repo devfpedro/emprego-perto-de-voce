@@ -277,3 +277,4 @@ def painel_empresa_vagas():
         }), 200
     except Exception:
         return jsonify({'erro': 'Erro interno ao buscar painel de vagas.'}), 500
+    

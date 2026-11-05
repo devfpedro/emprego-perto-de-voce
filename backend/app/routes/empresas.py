@@ -116,3 +116,4 @@ def detalhar_empresa(empresa_id):
 
     except Exception:
         return jsonify({'erro': 'Erro interno ao detalhar empresa.'}), 500
+    
