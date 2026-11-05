@@ -7,7 +7,7 @@ Este  Produto Mínimo Viável (MVP) está sendo desenvolvido pela equipe **Itera
 
 ## 🛠️ Tecnologias Utilizadas (Escopo Inicial)
 * **Front-end:** React / React Native *(em definição)*
-* **Back-end:** Node.js / Java Spring Boot *(em definição)*
+* **Back-end:** Python Flask / Java Spring Boot *(em definição)*
 * **Banco de Dados:** PostgreSQL
 * **Gerenciamento:** Jira
 * **Prototipação:** Figma
