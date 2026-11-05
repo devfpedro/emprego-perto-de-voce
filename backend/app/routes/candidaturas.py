@@ -175,3 +175,4 @@ def alterar_status_candidatura(candidatura_id):
         return jsonify({"mensagem": "Status da candidatura atualizado."}), 200
     except Exception:
         return jsonify({'erro': 'Erro interno ao atualizar status.'}), 500
+    
