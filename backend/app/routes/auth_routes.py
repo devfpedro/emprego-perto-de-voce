@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.validators import validar_email, validar_cnpj, validar_telefone, validar_url, PERFIS_VALIDOS
@@ -10,9 +11,18 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 def cadastro():
     data = request.get_json() or {}
     perfil = str(data.get('perfil', '')).lower()
-    email = data.get('email')
+
+    email_raw = data.get('email')
+    email = email_raw.lower().strip() if email_raw else ''
+
     senha = data.get('senha')
-    telefone = data.get('telefone')
+
+    telefone_raw = data.get('telefone')
+    telefone = re.sub(r'\D', '', str(telefone_raw or ''))
+
+    cnpj_raw = data.get('cnpj')
+    cnpj = re.sub(r'\D', '', str(cnpj_raw or '')) if perfil == 'empresa' else None
+    
     bairroId = data.get('bairroId')
     
     if perfil not in PERFIS_VALIDOS:
@@ -27,7 +37,7 @@ def cadastro():
         return jsonify({'erro': 'O bairro é obrigatório para o cadastro de candidato!'}), 400
     
     if perfil == 'empresa':
-        if not validar_cnpj(data.get('cnpj')):
+        if not validar_cnpj(cnpj):
             return jsonify({'erro': 'CNPJ inválido.'}), 400
         if not validar_url(data.get('site')):
             return jsonify({'erro': 'URL do site inválida.'}), 400
@@ -65,11 +75,11 @@ def cadastro():
                     """, (
                         usuario_id,
                         data.get('nome'),
-                        data.get('cnpj'),
+                        cnpj,
                         data.get('descricao'),
                         data.get('setor'),
                         data.get('site'),
-                        data.get('bairroId')
+                        bairroId
                     ))
                 
                 conn.commit()
@@ -89,7 +99,7 @@ def cadastro():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
-    email = data.get('email')
+    email = data.get('email').lower().strip()
     senha = data.get('senha')
 
     if not validar_email(email) or not senha:
