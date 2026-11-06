@@ -151,6 +151,9 @@ def criar_vaga():
     bairro_id = data.get('bairroId')
     salario = data.get('salario')
 
+    if not titulo or not descricao or not requisitos or not area or not contrato or not regime or not turno or not bairro_id:
+        return jsonify({'erro': 'Todos os campos obrigatórios de vaga devem ser preenchidos.'}), 400
+        
     if len(titulo) < 5:
         return jsonify({'erro': 'O título deve conter no mínimo 5 caracteres.'}), 400
     if len(descricao) < 20:

@@ -22,8 +22,18 @@ def cadastro():
 
     cnpj_raw = data.get('cnpj')
     cnpj = re.sub(r'\D', '', str(cnpj_raw or '')) if perfil == 'empresa' else None
-    
+
     bairroId = data.get('bairroId')
+
+    if not perfil or not email or not senha or not telefone or not bairroId:
+        return jsonify({'erro': 'Campos obrigatórios ausentes (Perfil, email, senha, telefone e bairroId são obrigatórios),'}) , 400
+
+    if perfil == 'candidato':
+        if not data.get('nome') or not data.get('whatsapp') or not data.get('areaInteresse'):
+            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, whatsapp, areaInteresse).'}), 400
+    elif perfil == 'empresa':
+        if not data.get('nome') or not data.get('cnpj') or not data.get('setor'):
+            return jsonify({'erro': 'Campos obrigatórios da empresa ausentes (nome, cnpj, setor).'}), 400
     
     if perfil not in PERFIS_VALIDOS:
         return jsonify({'erro': 'Perfil inválido. Use candidato ou empresa.'}), 400
