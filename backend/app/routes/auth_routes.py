@@ -13,6 +13,7 @@ def cadastro():
     email = data.get('email')
     senha = data.get('senha')
     telefone = data.get('telefone')
+    bairroId = data.get('bairroId')
     
     if perfil not in PERFIS_VALIDOS:
         return jsonify({'erro': 'Perfil inválido. Use candidato ou empresa.'}), 400
@@ -22,7 +23,9 @@ def cadastro():
         return jsonify({'erro': 'A senha deve conter no mínimo 8 caracteres.'}), 400
     if not validar_telefone(telefone):
         return jsonify({'erro': 'Telefone inválido. Deve conter 10 ou 11 dígitos.'}), 400
-        
+    if not bairroId:
+        return jsonify({'erro': 'O bairro é obrigatório para o cadastro de candidato!'}), 400
+    
     if perfil == 'empresa':
         if not validar_cnpj(data.get('cnpj')):
             return jsonify({'erro': 'CNPJ inválido.'}), 400
@@ -53,7 +56,7 @@ def cadastro():
                         data.get('nome'), 
                         data.get('whatsapp'), 
                         data.get('areaInteresse'), 
-                        data.get('cidadeId') if not data.get('bairroId') else data.get('bairroId') 
+                        bairroId 
                     ))
                 else:
                     cur.execute("""
