@@ -98,10 +98,11 @@ def cadastro():
 
     except Exception as e:
         erro_msg = str(e)
-        if 'usuarios_email_key' in erro_msg or 'empresas_cnpj_key' in erro_msg or 'empresas_cnpj_valido' in erro_msg:
+        if 'usuarios_email_key' in erro_msg or 'empresas_cnpj_key' in erro_msg:
             return jsonify({'erro': 'Este e-mail ou CNPJ já está em uso.'}), 409
-        if 'violates check constraint' in erro_msg or 'violates foreign key' in erro_msg:
-            return jsonify({'erro': 'Dados enviados violam as regras do banco de dados.'}), 400
+        if 'violates check constraint' in erro_msg or 'violates foreign key' in erro_msg or 'empresas_cnpj_valido' in erro_msg:
+            return jsonify({'erro': 'Dados enviados violam as regras do banco de dados (verifique o CNPJ ou campos informados).'}), 400
+
             
         return jsonify({'erro': 'Erro interno ao cadastrar usuário.'}), 500
 
