@@ -4,7 +4,10 @@ import jwt
 from functools import wraps
 from flask import request, jsonify
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'chave_secreta_projeto_emprego_perto_2026')
+JWT_SECRET = os.environ.get('JWT_SECRET')
+
+if not JWT_SECRET:
+    raise ValueError("A variável de ambiente JWT_SECRET é obrigatória para iniciar a aplicação.")
 
 def gerar_token(usuario_id, perfil):
     payload = {
