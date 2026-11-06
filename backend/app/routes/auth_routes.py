@@ -109,7 +109,10 @@ def cadastro():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
-    email = data.get('email').lower().strip()
+
+    email_raw = data.get('email')
+    email = email_raw.lower().strip() if email_raw else ''
+    
     senha = data.get('senha')
 
     if not validar_email(email) or not senha:
