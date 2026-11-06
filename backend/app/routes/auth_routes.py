@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.validators import validar_email, validar_cnpj, validar_telefone, validar_url, PERFIS_VALIDOS
@@ -10,9 +11,29 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 def cadastro():
     data = request.get_json() or {}
     perfil = str(data.get('perfil', '')).lower()
-    email = data.get('email')
+
+    email_raw = data.get('email')
+    email = email_raw.lower().strip() if email_raw else ''
+
     senha = data.get('senha')
-    telefone = data.get('telefone')
+
+    telefone_raw = data.get('telefone')
+    telefone = re.sub(r'\D', '', str(telefone_raw or ''))
+
+    cnpj_raw = data.get('cnpj')
+    cnpj = re.sub(r'\D', '', str(cnpj_raw or '')) if perfil == 'empresa' else None
+
+    bairroId = data.get('bairroId')
+
+    if not perfil or not email or not senha or not telefone or not bairroId:
+        return jsonify({'erro': 'Campos obrigatórios ausentes (Perfil, email, senha, telefone e bairroId são obrigatórios),'}) , 400
+
+    if perfil == 'candidato':
+        if not data.get('nome') or not data.get('whatsapp') or not data.get('areaInteresse'):
+            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, whatsapp, areaInteresse).'}), 400
+    elif perfil == 'empresa':
+        if not data.get('nome') or not data.get('cnpj') or not data.get('setor'):
+            return jsonify({'erro': 'Campos obrigatórios da empresa ausentes (nome, cnpj, setor).'}), 400
     
     if perfil not in PERFIS_VALIDOS:
         return jsonify({'erro': 'Perfil inválido. Use candidato ou empresa.'}), 400
@@ -22,9 +43,11 @@ def cadastro():
         return jsonify({'erro': 'A senha deve conter no mínimo 8 caracteres.'}), 400
     if not validar_telefone(telefone):
         return jsonify({'erro': 'Telefone inválido. Deve conter 10 ou 11 dígitos.'}), 400
-        
+    if not bairroId:
+        return jsonify({'erro': 'O bairro é obrigatório para o cadastro de candidato!'}), 400
+    
     if perfil == 'empresa':
-        if not validar_cnpj(data.get('cnpj')):
+        if not validar_cnpj(cnpj):
             return jsonify({'erro': 'CNPJ inválido.'}), 400
         if not validar_url(data.get('site')):
             return jsonify({'erro': 'URL do site inválida.'}), 400
@@ -53,7 +76,7 @@ def cadastro():
                         data.get('nome'), 
                         data.get('whatsapp'), 
                         data.get('areaInteresse'), 
-                        data.get('cidadeId') if not data.get('bairroId') else data.get('bairroId') 
+                        bairroId 
                     ))
                 else:
                     cur.execute("""
@@ -62,11 +85,11 @@ def cadastro():
                     """, (
                         usuario_id,
                         data.get('nome'),
-                        data.get('cnpj'),
+                        cnpj,
                         data.get('descricao'),
                         data.get('setor'),
                         data.get('site'),
-                        data.get('bairroId')
+                        bairroId
                     ))
                 
                 conn.commit()
@@ -75,10 +98,11 @@ def cadastro():
 
     except Exception as e:
         erro_msg = str(e)
-        if 'usuarios_email_key' in erro_msg or 'empresas_cnpj_key' in erro_msg or 'empresas_cnpj_valido' in erro_msg:
+        if 'usuarios_email_key' in erro_msg or 'empresas_cnpj_key' in erro_msg:
             return jsonify({'erro': 'Este e-mail ou CNPJ já está em uso.'}), 409
-        if 'violates check constraint' in erro_msg or 'violates foreign key' in erro_msg:
-            return jsonify({'erro': 'Dados enviados violam as regras do banco de dados.'}), 400
+        if 'violates check constraint' in erro_msg or 'violates foreign key' in erro_msg or 'empresas_cnpj_valido' in erro_msg:
+            return jsonify({'erro': 'Dados enviados violam as regras do banco de dados (verifique o CNPJ ou campos informados).'}), 400
+
             
         return jsonify({'erro': 'Erro interno ao cadastrar usuário.'}), 500
 
@@ -86,7 +110,10 @@ def cadastro():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
-    email = data.get('email')
+
+    email_raw = data.get('email')
+    email = email_raw.lower().strip() if email_raw else ''
+    
     senha = data.get('senha')
 
     if not validar_email(email) or not senha:

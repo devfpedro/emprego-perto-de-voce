@@ -151,6 +151,9 @@ def criar_vaga():
     bairro_id = data.get('bairroId')
     salario = data.get('salario')
 
+    if not titulo or not descricao or not requisitos or not area or not contrato or not regime or not turno or not bairro_id:
+        return jsonify({'erro': 'Todos os campos obrigatórios de vaga devem ser preenchidos.'}), 400
+        
     if len(titulo) < 5:
         return jsonify({'erro': 'O título deve conter no mínimo 5 caracteres.'}), 400
     if len(descricao) < 20:
@@ -163,13 +166,27 @@ def criar_vaga():
         return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
 
     try:
+        bairro_id_int = int(bairro_id)
+    except (ValueError, TypeError):
+        return jsonify({'erro': 'O campo bairroId deve ser um número inteiro válido.'}), 400
+
+    salario_float = None
+    if salario is not None:
+        try:
+            salario_float = float(salario)
+            if salario_float <= 0:
+                return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'erro': 'O salário deve ser um valor numérico válido.'}), 400
+
+    try:
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO vagas (empresa_id, titulo, descricao, requisitos, area, contrato, regime, turno, bairro_id, salario, status)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'aberta')
                     RETURNING id;
-                """, (usuario['id'], titulo, descricao, requisitos, area, contrato, regime, turno, bairro_id, salario))
+                """, (usuario['id'], titulo, descricao, requisitos, area, contrato, regime, turno, bairro_id_int, salario_float))
                 vaga_id = cur.fetchone()['id']
                 conn.commit()
 
