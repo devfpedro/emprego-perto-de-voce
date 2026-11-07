@@ -1,0 +1,1901 @@
+{
+	"log": {
+		"version": "1.2",
+		"creator": {
+			"name": "Insomnia REST Client",
+			"version": "insomnia.desktop.app:v13.4.0"
+		},
+		"entries": [
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 431.871,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/cadastro",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"candidato\",\n  \"nome\": \"Juan Nicolas\",\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaSegura123\",\n  \"telefone\": \"83988887777\",\n  \"whatsapp\": \"83988887777\",\n  \"areaInteresse\": \"servicos_gerais\",\n  \"bairroId\": 10\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 201,
+					"statusText": "CREATED",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 12:47:17 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "67"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 67,
+						"mimeType": "application/json",
+						"text": "{\n  \"id\": 5,\n  \"mensagem\": \"Usu\\u00e1rio cadastrado com sucesso\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 431.871,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Cadastro de Candidato com Sucesso"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 4.126,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/cadastro",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"candidato\",\n  \"nome\": \"Juan Nicolas\",\n  \"senha\": \"123\",\n  \"telefone\": \"83988887777\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 400,
+					"statusText": "BAD REQUEST",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 12:48:06 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "122"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 122,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"Campos obrigat\\u00f3rios ausentes (Perfil, email, senha, telefone e bairroId s\\u00e3o obrigat\\u00f3rios),\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 4.126,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Erro 400"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 225.272,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/cadastro",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"empresa\",\n  \"nome\": \"Padaria Guarabira Ltda\",\n  \"cnpj\": \"12345678000195\",\n  \"email\": \"contato@padaria.com\",\n  \"senha\": \"senhaSegura123\",\n  \"telefone\": \"8332710000\",\n  \"descricao\": \"Padaria e confeitaria tradicional.\",\n  \"setor\": \"alimentacao\",\n  \"site\": \"https://padariaguarabira.com.br\",\n  \"bairroId\": 10\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 201,
+					"statusText": "CREATED",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:11:17 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "67"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 67,
+						"mimeType": "application/json",
+						"text": "{\n  \"id\": 6,\n  \"mensagem\": \"Usu\\u00e1rio cadastrado com sucesso\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 225.272,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Cadastro de Empresa com Sucesso"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 3.2590000000000003,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/cadastro",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"empresa\",\n  \"nome\": \"Padaria Guarabira Ltda\",\n  \"cnpj\": \"11111111111111\",\n  \"email\": \"contato@padaria.com\",\n  \"senha\": \"senhaSegura123\",\n  \"telefone\": \"8332710000\",\n  \"descricao\": \"Padaria e confeitaria tradicional.\",\n  \"setor\": \"alimentacao\",\n  \"site\": \"https://padariaguarabira.com.br\",\n  \"bairroId\": 10\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 400,
+					"statusText": "BAD REQUEST",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:12:27 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "36"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 36,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"CNPJ inv\\u00e1lido.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 3.2590000000000003,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Erro 400 - CNPJ Inválido"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 165.58800000000002,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/login",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaSegura123\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:13:10 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "279"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 279,
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"candidato\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicGVyZmlsIjoiY2FuZGlkYXRvIiwiZXhwIjoxNzk0NjYxOTkwfQ.Um2-tghwHDtzTBXNWhBIXj8h-9199zNpXNmhm4B3uHo\",\n  \"usuario\": {\n    \"email\": \"juan@exemplo.com\",\n    \"id\": 5,\n    \"nome\": \"Juan Nicolas\"\n  }\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 165.58800000000002,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Login com Sucesso (Candidato ou Empresa)"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 161.42999999999998,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/login",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"contato@padaria.com\",\n  \"senha\": \"senhaSegura123\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:26:37 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "287"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 287,
+						"mimeType": "application/json",
+						"text": "{\n  \"perfil\": \"empresa\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c\",\n  \"usuario\": {\n    \"email\": \"contato@padaria.com\",\n    \"id\": 6,\n    \"nome\": \"Padaria Guarabira Ltda\"\n  }\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 161.42999999999998,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Login com Sucesso (Candidato ou Empresa)"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 162.172,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/auth/login",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 401,
+					"statusText": "UNAUTHORIZED",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:14:12 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "48"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 48,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"E-mail ou senha inv\\u00e1lidos.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 162.172,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Autenticação (/auth) Erro 401 - Login com Senha Incorreta"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 45.275000000000006,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/localidades",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:14:54 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "1553"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 1553,
+						"mimeType": "application/json",
+						"text": "[\n  {\n    \"bairros\": [\n      {\n        \"id\": 1,\n        \"latitude\": -6.8548,\n        \"longitude\": -35.4902,\n        \"nome\": \"Centro\"\n      },\n      {\n        \"id\": 6,\n        \"latitude\": -6.855,\n        \"longitude\": -35.475,\n        \"nome\": \"Cordeiro\"\n      },\n      {\n        \"id\": 3,\n        \"latitude\": -6.86,\n        \"longitude\": -35.495,\n        \"nome\": \"Ju??\"\n      },\n      {\n        \"id\": 4,\n        \"latitude\": -6.845,\n        \"longitude\": -35.48,\n        \"nome\": \"Nordeste\"\n      },\n      {\n        \"id\": 2,\n        \"latitude\": -6.85,\n        \"longitude\": -35.485,\n        \"nome\": \"Novo\"\n      },\n      {\n        \"id\": 5,\n        \"latitude\": -6.865,\n        \"longitude\": -35.485,\n        \"nome\": \"Primavera\"\n      }\n    ],\n    \"id\": 1,\n    \"nome\": \"Guarabira\"\n  },\n  {\n    \"bairros\": [\n      {\n        \"id\": 10,\n        \"latitude\": -7.16,\n        \"longitude\": -34.85,\n        \"nome\": \"Banc??rios\"\n      },\n      {\n        \"id\": 12,\n        \"latitude\": -7.08,\n        \"longitude\": -34.83,\n        \"nome\": \"Bessa\"\n      },\n      {\n        \"id\": 7,\n        \"latitude\": -7.115,\n        \"longitude\": -34.861,\n        \"nome\": \"Centro\"\n      },\n      {\n        \"id\": 8,\n        \"latitude\": -7.1,\n        \"longitude\": -34.835,\n        \"nome\": \"Mana??ra\"\n      },\n      {\n        \"id\": 11,\n        \"latitude\": -7.18,\n        \"longitude\": -34.84,\n        \"nome\": \"Mangabeira\"\n      },\n      {\n        \"id\": 9,\n        \"latitude\": -7.115,\n        \"longitude\": -34.82,\n        \"nome\": \"Tamba??\"\n      }\n    ],\n    \"id\": 2,\n    \"nome\": \"Joao Pessoa\"\n  }\n]\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 45.275000000000006,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Localidades Listar Localidades"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 66.095,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/vagas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:17:40 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "2455"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 2455,
+						"mimeType": "application/json",
+						"text": "{\n  \"itens\": [\n    {\n      \"area\": \"comercio\",\n      \"bairro\": {\n        \"id\": 1,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 3,\n        \"nome\": \"Mercado Guarabirense\"\n      },\n      \"id\": 1,\n      \"titulo\": \"Atendente de Loja\"\n    },\n    {\n      \"area\": \"comercio\",\n      \"bairro\": {\n        \"id\": 1,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 3,\n        \"nome\": \"Mercado Guarabirense\"\n      },\n      \"id\": 2,\n      \"titulo\": \"Operador de Caixa\"\n    },\n    {\n      \"area\": \"comercio\",\n      \"bairro\": {\n        \"id\": 2,\n        \"nome\": \"Novo\"\n      },\n      \"contrato\": \"meio_periodo\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 3,\n        \"nome\": \"Mercado Guarabirense\"\n      },\n      \"id\": 3,\n      \"titulo\": \"Repositor\"\n    },\n    {\n      \"area\": \"servicos_gerais\",\n      \"bairro\": {\n        \"id\": 1,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"estagio\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 3,\n        \"nome\": \"Mercado Guarabirense\"\n      },\n      \"id\": 4,\n      \"titulo\": \"Auxiliar Administrativo\"\n    },\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 7,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 5,\n      \"titulo\": \"Auxiliar de Cozinha\"\n    },\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 7,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 6,\n      \"titulo\": \"Garcom\"\n    },\n    {\n      \"area\": \"servicos_gerais\",\n      \"bairro\": {\n        \"id\": 8,\n        \"nome\": \"Mana??ra\"\n      },\n      \"contrato\": \"temporario\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 7,\n      \"titulo\": \"Entregador\"\n    },\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 9,\n        \"nome\": \"Tamba??\"\n      },\n      \"contrato\": \"meio_periodo\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 8,\n      \"titulo\": \"Auxiliar de Atendimento\"\n    }\n  ],\n  \"total\": 8\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 66.095,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Listar Vagas"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 30.946,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/vagas?area=alimentacao&raioKm=10",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:18:04 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "953"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 953,
+						"mimeType": "application/json",
+						"text": "{\n  \"itens\": [\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 7,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 5,\n      \"titulo\": \"Auxiliar de Cozinha\"\n    },\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 7,\n        \"nome\": \"Centro\"\n      },\n      \"contrato\": \"clt\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 6,\n      \"titulo\": \"Garcom\"\n    },\n    {\n      \"area\": \"alimentacao\",\n      \"bairro\": {\n        \"id\": 9,\n        \"nome\": \"Tamba??\"\n      },\n      \"contrato\": \"meio_periodo\",\n      \"distanciaKm\": 0.0,\n      \"empresa\": {\n        \"id\": 4,\n        \"nome\": \"Restaurante Sabor Paraibano\"\n      },\n      \"id\": 8,\n      \"titulo\": \"Auxiliar de Atendimento\"\n    }\n  ],\n  \"total\": 3\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 30.946,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Listar Vagas Query Params"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 3.995,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/vagas?bairroId=abc",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 400,
+					"statusText": "BAD REQUEST",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:18:52 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "75"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 75,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"O par\\u00e2metro bairroId deve ser um n\\u00famero inteiro.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 3.995,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Erro 400 - Parâmetro de Busca Inválido"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 66.413,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/vagas/1",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:19:33 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "451"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 451,
+						"mimeType": "application/json",
+						"text": "{\n  \"area\": \"comercio\",\n  \"bairro\": {\n    \"id\": 1,\n    \"nome\": \"Centro\"\n  },\n  \"contrato\": \"clt\",\n  \"descricao\": \"Atendimento aos clientes e organizacao da loja.\",\n  \"empresa\": {\n    \"id\": 3,\n    \"nome\": \"Mercado Guarabirense\"\n  },\n  \"id\": 1,\n  \"minhaCandidatura\": null,\n  \"regime\": \"presencial\",\n  \"requisitos\": \"Boa comunicacao e disponibilidade.\",\n  \"salario\": 1600.0,\n  \"status\": \"aberta\",\n  \"titulo\": \"Atendente de Loja\",\n  \"turno\": \"integral\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 66.413,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Detalhar Vaga por ID"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 23.391,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/vagas/999",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 404,
+					"statusText": "NOT FOUND",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:19:54 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "42"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 42,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"Vaga n\\u00e3o encontrada.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 23.391,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Erro 404 - Vaga Inexistente"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 23.616999999999997,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/vagas/1/candidaturas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicGVyZmlsIjoiY2FuZGlkYXRvIiwiZXhwIjoxNzk0NjYxOTkwfQ.Um2-tghwHDtzTBXNWhBIXj8h-9199zNpXNmhm4B3uHo"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 409,
+					"statusText": "CONFLICT",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:27:49 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "97"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 97,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"Voc\\u00ea j\\u00e1 se candidatou a esta vaga ou a vaga n\\u00e3o est\\u00e1 aberta.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 23.616999999999997,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Candidatar-se a uma Vaga"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 21.916,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/vagas/1/candidaturas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 403,
+					"statusText": "FORBIDDEN",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:27:59 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "63"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 63,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"Apenas candidatos podem se candidatar a vagas.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 21.916,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Candidatar-se a uma Vaga"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 39.759,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/candidaturas/minhas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicGVyZmlsIjoiY2FuZGlkYXRvIiwiZXhwIjoxNzk0NjYxOTkwfQ.Um2-tghwHDtzTBXNWhBIXj8h-9199zNpXNmhm4B3uHo"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"email\": \"juan@exemplo.com\",\n  \"senha\": \"senhaErrada\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:29:07 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "226"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 226,
+						"mimeType": "application/json",
+						"text": "[\n  {\n    \"bairro\": \"Centro\",\n    \"data\": \"2026-11-07T13:25:19.464673\",\n    \"empresa\": \"Mercado Guarabirense\",\n    \"id\": 5,\n    \"status\": \"enviada\",\n    \"vaga\": {\n      \"id\": 1,\n      \"titulo\": \"Atendente de Loja\"\n    }\n  }\n]\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 39.759,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Vagas (Público e Candidato) Listar Minhas Candidaturas"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 32.509,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/empresas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:30:33 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "692"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 692,
+						"mimeType": "application/json",
+						"text": "[\n  {\n    \"bairro\": {\n      \"id\": 1,\n      \"latitude\": -6.8548,\n      \"longitude\": -35.4902,\n      \"nome\": \"Centro\"\n    },\n    \"id\": 3,\n    \"nome\": \"Mercado Guarabirense\",\n    \"qtdVagasAbertas\": 4,\n    \"setor\": \"comercio\"\n  },\n  {\n    \"bairro\": {\n      \"id\": 7,\n      \"latitude\": -7.115,\n      \"longitude\": -34.861,\n      \"nome\": \"Centro\"\n    },\n    \"id\": 4,\n    \"nome\": \"Restaurante Sabor Paraibano\",\n    \"qtdVagasAbertas\": 4,\n    \"setor\": \"alimentacao\"\n  },\n  {\n    \"bairro\": {\n      \"id\": 10,\n      \"latitude\": -7.16,\n      \"longitude\": -34.85,\n      \"nome\": \"Banc??rios\"\n    },\n    \"id\": 6,\n    \"nome\": \"Padaria Guarabira Ltda\",\n    \"qtdVagasAbertas\": 0,\n    \"setor\": \"alimentacao\"\n  }\n]\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 32.509,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Empresas (Público) Listar Empresas"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 30.612000000000002,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/empresas/4",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:31:00 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "747"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 747,
+						"mimeType": "application/json",
+						"text": "{\n  \"bairro\": \"Centro\",\n  \"descricao\": \"Restaurante especializado em comida regional.\",\n  \"distanciaKm\": 0.0,\n  \"id\": 4,\n  \"nome\": \"Restaurante Sabor Paraibano\",\n  \"setor\": \"alimentacao\",\n  \"site\": \"https://saborparaibano.example\",\n  \"telefone\": \"83999990004\",\n  \"vagasAbertas\": [\n    {\n      \"contrato\": \"clt\",\n      \"id\": 5,\n      \"salario\": 1600.0,\n      \"titulo\": \"Auxiliar de Cozinha\"\n    },\n    {\n      \"contrato\": \"clt\",\n      \"id\": 6,\n      \"salario\": 1500.0,\n      \"titulo\": \"Garcom\"\n    },\n    {\n      \"contrato\": \"temporario\",\n      \"id\": 7,\n      \"salario\": 1400.0,\n      \"titulo\": \"Entregador\"\n    },\n    {\n      \"contrato\": \"meio_periodo\",\n      \"id\": 8,\n      \"salario\": 850.0,\n      \"titulo\": \"Auxiliar de Atendimento\"\n    }\n  ]\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 30.612000000000002,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Módulo de Empresas (Público) Detalhar Empresa"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 55.626000000000005,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/vagas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Auxilio na preparação de alimentos e limpeza geral da cozinha.\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": 1500.00\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 201,
+					"statusText": "CREATED",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:32:25 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "78"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 78,
+						"mimeType": "application/json",
+						"text": "{\n  \"id\": 9,\n  \"mensagem\": \"Vaga criada com sucesso!\",\n  \"status\": \"aberta\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 55.626000000000005,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Criar Nova Vaga"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 3.682,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/vagas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Curta\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": 1500.00\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 400,
+					"statusText": "BAD REQUEST",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:33:20 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "80"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 80,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"A descri\\u00e7\\u00e3o deve conter no m\\u00ednimo 20 caracteres.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 3.682,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Erro 400 - Descrição muito curta na criação de vaga"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 2.458,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8000/vagas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Auxilio na preparação de alimentos e limpeza geral da cozinha.\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": \"abc\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 400,
+					"statusText": "BAD REQUEST",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:34:29 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "76"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 76,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"O sal\\u00e1rio deve ser um valor num\\u00e9rico v\\u00e1lido.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 2.458,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Erro 400 - Salário ou Bairro inválido (Enviando letras)"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 45.203,
+				"request": {
+					"method": "PUT",
+					"url": "http://localhost:8000/vagas/9",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Auxilio na preparação de alimentos e limpeza geral da cozinha.\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": 1600.00,\n  \"status\": \"aberta\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:44:29 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "49"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 49,
+						"mimeType": "application/json",
+						"text": "{\n  \"mensagem\": \"Vaga atualizada com sucesso.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 45.203,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Atualizar Vaga (PUT)"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 27.406,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000/empresa/vagas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Auxilio na preparação de alimentos e limpeza geral da cozinha.\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": 1600.00\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:38:16 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "238"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 238,
+						"mimeType": "application/json",
+						"text": "{\n  \"itens\": [\n    {\n      \"dataCriacao\": \"2026-11-07T13:32:25.914012\",\n      \"id\": 9,\n      \"qtdCandidaturas\": 0,\n      \"status\": \"aberta\",\n      \"titulo\": \"Auxiliar de Cozinha\"\n    }\n  ],\n  \"totalCandidaturas\": 0,\n  \"vagasAbertas\": 1\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 27.406,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Visualizar Painel da Empresa"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 33.675,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8000//empresa/candidaturas",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"titulo\": \"Auxiliar de Cozinha\",\n  \"descricao\": \"Auxilio na preparação de alimentos e limpeza geral da cozinha.\",\n  \"requisitos\": \"Disponibilidade para turno matutino.\",\n  \"area\": \"alimentacao\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 10,\n  \"salario\": 1600.00\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "OK",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:39:43 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "3"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 3,
+						"mimeType": "application/json",
+						"text": "[]\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 33.675,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Listar Candidaturas Recebidas pela Empresa"
+			},
+			{
+				"startedDateTime": "2026-11-07T13:53:41.931Z",
+				"time": 35.736999999999995,
+				"request": {
+					"method": "PATCH",
+					"url": "http://localhost:8000/candidaturas/99/status",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwicGVyZmlsIjoiZW1wcmVzYSIsImV4cCI6MTc5NDY2Mjc5N30.dtdSS0wt90ZUZcTE5HU2-F_JDIVlEZwaNaTlCiRCM1c"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n  \"status\": \"em_analise\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 404,
+					"statusText": "NOT FOUND",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Server",
+							"value": "Werkzeug/3.1.9 Python/3.14.7"
+						},
+						{
+							"name": "Date",
+							"value": "Sat, 07 Nov 2026 13:41:07 GMT"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Content-Length",
+							"value": "49"
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"name": "Connection",
+							"value": "close"
+						}
+					],
+					"content": {
+						"size": 49,
+						"mimeType": "application/json",
+						"text": "{\n  \"erro\": \"Candidatura n\\u00e3o encontrada.\"\n}\n"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 35.736999999999995,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Painel da Empresa (Restrito) Atualizar Status de Candidatura"
+			}
+		]
+	}
+}
