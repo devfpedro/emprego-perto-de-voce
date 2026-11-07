@@ -32,7 +32,7 @@ def cadastro():
         return jsonify({'erro': 'Campos obrigatórios ausentes (Perfil, email, senha, telefone e bairroId são obrigatórios),'}) , 400
 
     if perfil == 'candidato':
-        if not data.get('nome') or not data.get('whatsapp') or not data.get('areaInteresse'):
+        if not data.get('nome') or not data.get('areaInteresse'):
             return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, whatsapp, areaInteresse).'}), 400
     elif perfil == 'empresa':
         if not data.get('nome') or not data.get('cnpj') or not data.get('setor'):
