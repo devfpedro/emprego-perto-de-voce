@@ -162,8 +162,6 @@ def criar_vaga():
         return jsonify({'erro': 'Requisitos e bairroId são obrigatórios.'}), 400
     if area not in AREAS_VALIDAS or contrato not in CONTRATOS_VALIDOS or regime not in REGIMES_VALIDOS or turno not in TURNOS_VALIDOS:
         return jsonify({'erro': 'Valores de área, contrato, regime ou turno inválidos.'}), 400
-    if salario is not None and float(salario) <= 0:
-        return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
 
     try:
         bairro_id_int = int(bairro_id)
