@@ -12,10 +12,23 @@ def listar_vagas():
     q = request.args.get('q', '').lower()
     area = request.args.get('area', '').lower()
     contrato = request.args.get('contrato', '').lower()
-    bairro_id = request.args.get('bairroId')
-    lat = request.args.get('lat', type=float)
-    lng = request.args.get('lng', type=float)
-    raio_km = request.args.get('raioKm', default=10, type=float)
+    
+
+    bairro_id_arg = request.args.get('bairroId')
+    bairro_id = None
+
+    if bairro_id_arg:
+        try:
+            bairro_id = int(bairro_id_arg)
+        except (ValueError, TypeError):
+            return jsonify({'erro': 'O parâmetro bairroId deve ser um número inteiro.'}), 400
+
+    try:
+        lat = request.args.get('lat', type=float)
+        lng = request.args.get('lng', type=float)
+        raio_km = request.args.get('raioKm', default=10, type=float)
+    except (ValueError, TypeError):
+        return jsonify({'erro': 'Parâmetros de geolocalização ou raio inválidos.'}), 400
 
     try:
         with get_db_connection() as conn:
@@ -151,6 +164,9 @@ def criar_vaga():
     bairro_id = data.get('bairroId')
     salario = data.get('salario')
 
+    if not isinstance(titulo, str) or not isinstance(descricao, str):
+        return jsonify({'erro': 'Título e descrição devem ser textos válidos.'}), 400
+
     if not titulo or not descricao or not requisitos or not area or not contrato or not regime or not turno or not bairro_id:
         return jsonify({'erro': 'Todos os campos obrigatórios de vaga devem ser preenchidos.'}), 400
         
@@ -162,8 +178,6 @@ def criar_vaga():
         return jsonify({'erro': 'Requisitos e bairroId são obrigatórios.'}), 400
     if area not in AREAS_VALIDAS or contrato not in CONTRATOS_VALIDOS or regime not in REGIMES_VALIDOS or turno not in TURNOS_VALIDOS:
         return jsonify({'erro': 'Valores de área, contrato, regime ou turno inválidos.'}), 400
-    if salario is not None and float(salario) <= 0:
-        return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
 
     try:
         bairro_id_int = int(bairro_id)
@@ -220,8 +234,20 @@ def atualizar_vaga(vaga_id):
         return jsonify({'erro': 'Dados obrigatórios inválidos.'}), 400
     if area not in AREAS_VALIDAS or contrato not in CONTRATOS_VALIDOS or regime not in REGIMES_VALIDOS or turno not in TURNOS_VALIDOS or status not in STATUS_VAGA_VALIDOS:
         return jsonify({'erro': 'Valores de enumeração inválidos fornecidos.'}), 400
-    if salario is not None and float(salario) <= 0:
-        return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
+
+    try:
+        bairro_id_int = int(bairro_id)
+    except (ValueError, TypeError):
+        return jsonify({'erro': 'O campo bairroId deve ser um número inteiro válido.'}), 400
+
+    salario_float = None
+    if salario is not None:
+        try:
+            salario_float = float(salario)
+            if salario_float <= 0:
+                return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'erro': 'O salário deve ser um valor numérico válido.'}), 400
 
     try:
         with get_db_connection() as conn:
@@ -239,7 +265,7 @@ def atualizar_vaga(vaga_id):
                     SET titulo = %s, descricao = %s, requisitos = %s, area = %s, contrato = %s, 
                         regime = %s, turno = %s, bairro_id = %s, salario = %s, status = %s
                     WHERE id = %s;
-                """, (titulo, descricao, requisitos, area, contrato, regime, turno, bairro_id, salario, status, vaga_id))
+                """, (titulo, descricao, requisitos, area, contrato, regime, turno, bairro_id_int, salario_float, status, vaga_id))
                 conn.commit()
 
         return jsonify({"mensagem": "Vaga atualizada com sucesso."}), 200
