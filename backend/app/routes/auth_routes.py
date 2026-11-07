@@ -25,6 +25,9 @@ def cadastro():
 
     bairroId = data.get('bairroId')
 
+    if not isinstance(email, str) or not isinstance(senha, str):
+        return jsonify({'erro': 'E-mail e senha devem ser textos válidos.'}), 400
+
     if not perfil or not email or not senha or not telefone or not bairroId:
         return jsonify({'erro': 'Campos obrigatórios ausentes (Perfil, email, senha, telefone e bairroId são obrigatórios),'}) , 400
 
