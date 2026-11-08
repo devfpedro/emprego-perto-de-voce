@@ -283,3 +283,6 @@ CREATE TRIGGER trg_atualizar_candidaturas
 BEFORE UPDATE ON candidaturas
 FOR EACH ROW
 EXECUTE FUNCTION atualizar_data_modificacao();
+-- Indice para consultas de vagas por empresa
+CREATE INDEX IF NOT EXISTS idx_vagas_empresa_id
+ON vagas (empresa_id);

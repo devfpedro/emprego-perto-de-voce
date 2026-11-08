@@ -13,13 +13,12 @@ Este diretório contém os arquivos responsáveis pela criação, configuração
 
 | Arquivo | Descrição |
 |---|---|
-| `schema.sql` | Criação das tabelas, relacionamentos, restrições, funções e triggers. |
-| `seed.sql` | Inserção de dados fictícios para testes. |
+| `schema.sql` | Criação das tabelas, relacionamentos, restrições, funções, triggers e índices. |
+| `seed.sql` | Inserção de dados fictícios para demonstração e testes. |
 | `reset.sql` | Limpeza dos dados e reinicialização dos identificadores. |
-| `indexes.sql` | Criação de índices adicionais. |
+| `indexes.sql` | Arquivo reservado para índices adicionais. |
 | `docker-compose.yml` | Configuração do ambiente PostgreSQL com PostGIS. |
 | `DER.md` | Documentação do diagrama entidade-relacionamento. |
-| `migrations/` | Scripts de alterações futuras na estrutura do banco. |
 
 ## Estrutura do banco
 
@@ -39,13 +38,41 @@ Cada usuário pode possuir um perfil de candidato ou empresa. Uma candidatura n�
 
 O PostGIS permite realizar consultas geográficas, incluindo buscas por proximidade.
 
+## Contas de demonstração
+
+O arquivo `seed.sql` disponibiliza 14 contas fictícias para testes de autenticação.
+
+**Senha de todas as contas:** `Teste@1234`
+
+### Candidatos
+
+- candidato1@email.com
+- candidato2@email.com
+- candidato3@email.com
+- candidato4@email.com
+- candidato5@email.com
+- candidato6@email.com
+- candidato7@email.com
+- candidato8@email.com
+
+### Empresas
+
+- empresa1@email.com
+- empresa2@email.com
+- empresa3@email.com
+- empresa4@email.com
+- empresa5@email.com
+- empresa6@email.com
+
+**Atenção:** essas contas e a senha são destinadas exclusivamente a testes e demonstrações. Nunca utilize essa senha em contas reais.
+
 ## Configuração com Docker
 
 O projeto utiliza Docker Compose para executar o PostgreSQL com PostGIS em um container independente.
 
 O banco utiliza a porta `5433` do computador, mapeada para a porta `5432` do container.
 
-### 1. Iniciar o container
+### 1. Iniciar o banco de dados
 
 Execute na raiz do projeto:
 
@@ -53,43 +80,41 @@ Execute na raiz do projeto:
 sudo docker compose -f database/docker-compose.yml up -d
 ```
 
-### 2. Criar a estrutura
+Na primeira inicialização, o Docker cria o volume e executa automaticamente os scripts:
 
-Execute:
+- `01-schema.sql`: cria a extensão PostGIS, as tabelas, os relacionamentos, os índices, as funções e os triggers.
+- `02-seed.sql`: insere os dados fictícios de demonstração.
 
-```bash
-sudo docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce < database/schema.sql
-```
+Não é necessário executar esses arquivos manualmente.
 
-Esse script cria a extensão PostGIS, as sete tabelas, os índices, as funções e os triggers.
+### 2. Verificar a inicialização
 
-Execute apenas na criação inicial do banco, em uma instância vazia.
-
-### 3. Inserir dados de teste
-
-Execute:
+Para acompanhar os logs:
 
 ```bash
-sudo docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce < database/seed.sql
+sudo docker compose -f database/docker-compose.yml logs --tail=80
 ```
-
-O arquivo `seed.sql` contém dados fictícios para testar os relacionamentos e as consultas.
-
-### 4. Criar índices adicionais
-
-Execute:
-
-```bash
-sudo docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -v ON_ERROR_STOP=1 -f /dev/stdin < database/indexes.sql
-```
-
-## Consultas e testes
 
 Para acessar o banco:
 
 ```bash
 sudo docker exec -it emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce
 ```
+
+**Importante:** os scripts de inicialização são executados somente quando o volume do banco é criado pela primeira vez. Nas inicializações seguintes, os dados existentes são preservados.
+
+### 3. Recriar o banco do zero
+
+Caso seja necessário executar novamente o schema e o seed automaticamente, remova o volume e crie o ambiente novamente:
+
+```bash
+sudo docker compose -f database/docker-compose.yml down -v
+sudo docker compose -f database/docker-compose.yml up -d
+```
+
+**Atenção:** o comando `down -v` apaga o volume e todos os dados armazenados no banco. Utilize somente quando desejar recriar o ambiente de testes do zero.
+
+## Consultas e testes
 
 Verificar as tabelas:
 
@@ -129,9 +154,13 @@ Para remover os registros e reiniciar os identificadores:
 sudo docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -v ON_ERROR_STOP=1 < database/reset.sql
 ```
 
-**Atenção:** esse procedimento apaga todos os registros das sete tabelas. Utilize somente em ambiente de testes.
+**Atenção:** esse procedimento apaga os registros das sete tabelas. Utilize somente em ambiente de testes.
 
-Após a limpeza, os dados podem ser inseridos novamente executando `seed.sql`.
+Após a limpeza, os dados podem ser inseridos novamente:
+
+```bash
+sudo docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -v ON_ERROR_STOP=1 < database/seed.sql
+```
 
 ## Gerenciamento do container
 
@@ -159,19 +188,45 @@ Iniciar novamente:
 sudo docker compose -f database/docker-compose.yml start
 ```
 
-Para remover o container sem apagar o volume de dados:
+Remover o container sem apagar o volume de dados:
 
 ```bash
 sudo docker compose -f database/docker-compose.yml down
 ```
 
-**Importante:** os dados são armazenados no volume Docker `emprego_perto_data`. Não utilize `down -v` se desejar preservar o banco.
+**Importante:** os dados são armazenados no volume Docker `database_emprego_perto_data`. Não utilize `down -v` se desejar preservar o banco.
+
+## Backup e restauração
+
+### Criar backup
+
+Para gerar um backup completo do banco de dados:
+
+```bash
+sudo docker exec emprego-perto-db pg_dump -U emprego_user -d emprego_perto_de_voce -F c -f /tmp/emprego_perto.backup
+sudo docker cp emprego-perto-db:/tmp/emprego_perto.backup ./database/emprego_perto.backup
+```
+
+O arquivo será salvo em `database/emprego_perto.backup`, fora do container.
+
+### Restaurar backup
+
+Para restaurar o backup em um banco existente:
+
+```bash
+sudo docker cp ./database/emprego_perto.backup emprego-perto-db:/tmp/emprego_perto.backup
+sudo docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_perto_de_voce --clean --if-exists /tmp/emprego_perto.backup
+```
+
+**Atenção:** a opção `--clean` remove os objetos existentes que serão restaurados. Utilize somente quando desejar substituir a estrutura e os dados atuais.
+
+Mantenha os arquivos de backup em local seguro e não os envie ao Git.
 
 ## Observações
 
 - Os dados do `seed.sql` são fictícios e destinados exclusivamente a testes.
-- Os valores de `senha_hash` são placeholders, não hashes válidos para autenticação.
+- As senhas das contas de demonstração estão armazenadas em formato de hash compatível com a autenticação do Werkzeug.
 - As coordenadas geográficas dos bairros são aproximadas.
 - O PostGIS é utilizado para consultas geográficas.
-- O `schema.sql` deve ser executado apenas na criação inicial da estrutura.
+- O `schema.sql` e o `seed.sql` são executados automaticamente na primeira criação do volume.
 - O container deste projeto utiliza a porta `5433`, sem interferir em outros bancos executados na máquina.
