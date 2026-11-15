@@ -17,6 +17,8 @@ O projeto é gerenciado utilizando metodologias ágeis, como Scrum e Kanban, com
 - **Autenticação:** JWT
 - **Geolocalização:** PostGIS e cálculo de distância por Haversine
 - **Infraestrutura do banco:** Docker e Docker Compose
+- **Rotas do aplicativo:** Expo Router
+- **Testes de API:** Postman
 - **Gerenciamento:** Jira
 - **Prototipação:** Figma
 - **Versionamento:** Git e GitHub
@@ -33,6 +35,16 @@ emprego-perto-de-voce/
 ├── LICENSE
 └── README.md
 ```
+
+## 📚 Documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [`backend/api.md`](backend/api.md) | Contrato da API: rotas, payloads, validações e telas que usam cada rota |
+| [`backend/postman-test`](backend/postman-test) | Exportação das requisições de teste da API (Insomnia) |
+| [`database/README.md`](database/README.md) | Configuração do banco, contas de teste, reinício e backup |
+| [`database/DER.md`](database/DER.md) | Diagrama entidade-relacionamento |
+| [Documentação de Telas e Fluxos](mobile/docs/telas-e-fluxos/Documenta%C3%A7%C3%A3o%20de%20Telas%20e%20Fluxos.md) | Campos, validações e estados de cada tela do aplicativo |
 
 ## 🗄️ Banco de Dados
 
@@ -106,29 +118,24 @@ O banco será iniciado com as seguintes configurações:
 | Porta local | 5433 |
 | Tecnologia | PostgreSQL 17 + PostGIS 3.5 |
 
-Após iniciar o container, execute os scripts para criar a estrutura e inserir os dados iniciais:
+Na primeira inicialização, o Docker executa automaticamente os scripts `schema.sql` (tabelas, índices, funções e triggers) e `seed.sql` (dados fictícios de demonstração). **Não é necessário executá-los manualmente.**
+
+**Observação:** esses scripts rodam somente quando o volume do banco é criado pela primeira vez. Nas próximas inicializações, os dados existentes são preservados. O arquivo `indexes.sql` está reservado para índices adicionais e não faz parte da inicialização.
+
+Para recriar o banco do zero, apagando todos os dados do ambiente de testes:
 
 ```bash
-docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce < database/schema.sql
+docker compose -f database/docker-compose.yml down -v
+docker compose -f database/docker-compose.yml up -d
 ```
-
-```bash
-docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce < database/seed.sql
-```
-
-Para criar os índices:
-
-```bash
-docker exec -i emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -v ON_ERROR_STOP=1 -f /dev/stdin < database/indexes.sql
-```
-
-**Observação:** os comandos de criação da estrutura e inserção dos dados iniciais devem ser executados quando o banco ainda não tiver sido inicializado. Não execute novamente sem verificar o estado do banco.
 
 Para acessar o PostgreSQL pelo terminal:
 
 ```bash
 docker exec -it emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce
 ```
+
+**Contas de teste:** o `seed.sql` cria 14 contas fictícias (8 candidatos, como `candidato1@email.com`, e 6 empresas, como `empresa1@email.com`), todas com a senha `Teste@1234`. Use-as somente em testes e demonstrações; veja a lista completa em [`database/README.md`](database/README.md).
 
 ### 2. Back-end (API Flask)
 
@@ -152,6 +159,8 @@ Ative o ambiente virtual:
 source .venv/bin/activate
 ```
 
+No Windows (PowerShell), use `.venv\Scripts\Activate.ps1` para ativar o ambiente e `python` no lugar de `python3`.
+
 Instale as dependências:
 
 ```bash
@@ -164,7 +173,7 @@ Crie o arquivo de configuração local a partir do exemplo:
 cp .env.example .env
 ```
 
-O arquivo `.env` contém as configurações de conexão com o banco e a chave JWT. Configure uma chave secreta própria para o ambiente local.
+O arquivo `.env` contém a porta da API (`PORT`), a chave JWT (`JWT_SECRET`) e a conexão com o banco (`DATABASE_URL`, que já aponta para a porta 5433 do Docker). Configure uma chave secreta própria para o ambiente local.
 
 Inicie a API:
 
@@ -212,24 +221,29 @@ npx expo start
 
 Siga as instruções exibidas no terminal para executar o aplicativo no dispositivo ou emulador compatível.
 
-**Observação sobre a integração:** no estado documentado anteriormente, o arquivo `mobile/src/service/api.ts` estava configurado com `USE_MOCK = true`, utilizando dados simulados para autenticação. O endereço configurado para chamadas reais ainda precisava ser alinhado ao back-end Flask, executado por padrão na porta 8000. Verifique a configuração atual antes de utilizar a integração real.
+**Observação sobre a integração:** na versão atual da branch `main`, o arquivo `mobile/src/service/api.ts` ainda usa `USE_MOCK = true` (dados simulados) e a `BASE_URL` `http://192.168.1.10:3333`, com login em `/sessions`. Para usar a API real, é preciso apontar a `BASE_URL` para o back-end Flask (porta 8000, com o IP do computador quando o teste for no celular), usar `POST /auth/login` e adaptar a resposta da API, que retorna `token`, `perfil` e `usuario`.
 
 ## 🔌 Principais Endpoints da API
 
-A API disponibiliza funcionalidades de autenticação, consulta de vagas, gerenciamento de empresas e candidaturas.
+A API disponibiliza funcionalidades de autenticação, consulta de vagas, gerenciamento de empresas e candidaturas. As rotas protegidas exigem o cabeçalho `Authorization: Bearer <token>`. O detalhamento de cada rota está em [`backend/api.md`](backend/api.md).
 
 | Método | Endpoint | Descrição |
 |---|---|---|
 | GET | `/saude` | Verifica se a API está funcionando |
 | POST | `/auth/cadastro` | Realiza o cadastro de usuário |
 | POST | `/auth/login` | Realiza a autenticação |
-| GET | `/localidades` | Consulta localidades disponíveis |
+| GET | `/localidades` | Consulta cidades e bairros disponíveis |
+| GET | `/empresas` | Lista empresas e a quantidade de vagas abertas |
+| GET | `/empresas/{id}` | Consulta uma empresa e suas vagas abertas |
 | GET | `/vagas` | Lista vagas disponíveis |
 | GET | `/vagas/{id}` | Consulta uma vaga específica |
 | POST | `/vagas` | Cadastra uma vaga |
 | PUT | `/vagas/{id}` | Atualiza uma vaga |
+| POST | `/vagas/{id}/candidaturas` | Candidata-se a uma vaga (perfil candidato) |
 | GET | `/empresa/vagas` | Lista vagas da empresa autenticada |
+| GET | `/empresa/candidaturas` | Lista candidaturas recebidas pela empresa, com filtros `vagaId` e `status` |
 | GET | `/candidaturas/minhas` | Lista candidaturas do candidato autenticado |
+| PATCH | `/candidaturas/{id}/status` | Altera o status de uma candidatura (empresa dona da vaga) |
 
 ### Parâmetros de busca de vagas
 
@@ -259,13 +273,16 @@ Foram realizados testes utilizando requisições HTTP, consultas SQL e verifica�
 
 ### Testes da API
 
+As requisições de teste estão na coleção [`backend/postman-test`](backend/postman-test), exportada do Insomnia.
+
 Foram verificadas operações como:
 
 - Cadastro e autenticação de usuários.
 - Consulta de localidades.
 - Listagem e consulta individual de vagas.
 - Criação e atualização de vagas.
-- Consulta de candidaturas.
+- Candidatura a vagas e consulta de candidaturas.
+- Painel da empresa.
 - Validações de dados obrigatórios e formatos inválidos.
 - Controle de permissões de acesso.
 
