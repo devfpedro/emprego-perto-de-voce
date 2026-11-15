@@ -35,10 +35,12 @@ export default function CadastroEmpresaScreen() {
   const [descricao, setDescricao] = useState('');
   const [setor, setSetor] = useState('');
   const [site, setSite] = useState('');
-  
+
   const [localidades, setLocalidades] = useState<any[]>([]);
   const [cidadeId, setCidadeId] = useState<number | null>(null);
   const [bairroId, setBairroId] = useState<number | null>(null);
+  const [cidadeTexto, setCidadeTexto] = useState('');
+  const [bairroTexto, setBairroTexto] = useState('');
 
   const [loadingLocalidades, setLoadingLocalidades] = useState(true);
   const [loadingEnvio, setLoadingEnvio] = useState(false);
@@ -109,6 +111,16 @@ export default function CadastroEmpresaScreen() {
       setCampoComErro('site');
       return;
     }
+    if (localidades.length === 0 && !cidadeTexto.trim()) {
+      setErro('Informe a cidade da empresa.');
+      setCampoComErro('cidade');
+      return;
+    }
+    if (localidades.length === 0 && !bairroTexto.trim()) {
+      setErro('Informe o bairro da empresa.');
+      setCampoComErro('bairro');
+      return;
+    }
 
     try {
       setLoadingEnvio(true);
@@ -124,6 +136,8 @@ export default function CadastroEmpresaScreen() {
         site,
         cidadeId,
         bairroId,
+        cidade: cidadeTexto.trim(),
+        bairro: bairroTexto.trim(),
       };
 
       await ApiService.post('/auth/cadastro', payload);
@@ -150,11 +164,10 @@ export default function CadastroEmpresaScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollBody} showsVerticalScrollIndicator={false}>
-          
           {/* Seletor de Tipo de Cadastro (Abas) */}
           <View style={styles.switchContainer}>
-            <TouchableOpacity 
-              style={styles.switchTab} 
+            <TouchableOpacity
+              style={styles.switchTab}
               onPress={() => router.replace('/(auth)/cadastro-candidato' as any)}
             >
               <Text style={styles.switchText}>Candidato</Text>
@@ -288,47 +301,67 @@ export default function CadastroEmpresaScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Cidade</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.setoresRow}>
-              {localidades.map((loc) => {
-                const isSelected = cidadeId === loc.id;
-                return (
-                  <TouchableOpacity
-                    key={loc.id}
-                    style={[styles.setorChip, isSelected && styles.setorChipActive]}
-                    onPress={() => {
-                      setCidadeId(loc.id);
-                      if (loc.bairros && loc.bairros.length > 0) {
-                        setBairroId(loc.bairros[0].id);
-                      }
-                    }}
-                  >
-                    <Text style={[styles.setorChipText, isSelected && styles.setorChipTextActive]}>
-                      {loc.nome}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+            {loadingLocalidades ? (
+              <ActivityIndicator color="#0b6643" size="small" style={{ alignSelf: 'flex-start' }} />
+            ) : localidades.length > 0 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.setoresRow}>
+                {localidades.map((loc) => {
+                  const isSelected = cidadeId === loc.id;
+                  return (
+                    <TouchableOpacity
+                      key={loc.id}
+                      style={[styles.setorChip, isSelected && styles.setorChipActive]}
+                      onPress={() => {
+                        setCidadeId(loc.id);
+                        setBairroId(loc.bairros && loc.bairros.length > 0 ? loc.bairros[0].id : null);
+                      }}
+                    >
+                      <Text style={[styles.setorChipText, isSelected && styles.setorChipTextActive]}>
+                        {loc.nome}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <TextInput
+                style={[styles.input, campoComErro === 'cidade' && styles.inputError]}
+                placeholder="Ex.: Guarabira"
+                placeholderTextColor="#9ca3af"
+                value={cidadeTexto}
+                onChangeText={setCidadeTexto}
+              />
+            )}
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Bairro</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.setoresRow}>
-              {bairrosDisponiveis.map((b: any) => {
-                const isSelected = bairroId === b.id;
-                return (
-                  <TouchableOpacity
-                    key={b.id}
-                    style={[styles.setorChip, isSelected && styles.setorChipActive]}
-                    onPress={() => setBairroId(b.id)}
-                  >
-                    <Text style={[styles.setorChipText, isSelected && styles.setorChipTextActive]}>
-                      {b.nome}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+            {loadingLocalidades ? null : localidades.length > 0 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.setoresRow}>
+                {bairrosDisponiveis.map((b: any) => {
+                  const isSelected = bairroId === b.id;
+                  return (
+                    <TouchableOpacity
+                      key={b.id}
+                      style={[styles.setorChip, isSelected && styles.setorChipActive]}
+                      onPress={() => setBairroId(b.id)}
+                    >
+                      <Text style={[styles.setorChipText, isSelected && styles.setorChipTextActive]}>
+                        {b.nome}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <TextInput
+                style={[styles.input, campoComErro === 'bairro' && styles.inputError]}
+                placeholder="Ex.: Centro"
+                placeholderTextColor="#9ca3af"
+                value={bairroTexto}
+                onChangeText={setBairroTexto}
+              />
+            )}
           </View>
 
           <TouchableOpacity
@@ -514,4 +547,4 @@ const styles = StyleSheet.create({
     color: '#0b6643',
     fontWeight: '700',
   },
-});
+});cle
