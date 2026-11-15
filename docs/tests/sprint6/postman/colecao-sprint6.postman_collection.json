@@ -1,0 +1,1048 @@
+{
+  "info": {
+    "_postman_id": "040210a4-66bb-542d-aa2f-2a45968059e6",
+    "name": "Emprego Perto de Voce - Sprint 6",
+    "description": "Colecao de evidencias da Sprint 6. Sem tokens nem senhas: importe tambem ambiente.postman_environment.json e preencha as variaveis (baseUrl, emailCandidato, emailEmpresa, senha, etc.). Rode a pasta 1 primeiro (os logins gravam os tokens no ambiente); vagaId/candidaturaId sao gravados pelos testes das pastas 2 e 3.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1 - Autenticacao",
+      "description": "",
+      "item": [
+        {
+          "name": "Login candidato (salva tokenCandidato)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailCandidato}}\",\n  \"senha\": \"{{senha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+                  "const j = pm.response.json();",
+                  "pm.test('tem token/perfil/usuario', function () { pm.expect(j).to.have.all.keys('token','perfil','usuario'); });",
+                  "pm.environment.set('tokenCandidato', j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login empresa (salva tokenEmpresa)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailEmpresa}}\",\n  \"senha\": \"{{senha}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.environment.set('tokenEmpresa', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login invalido (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailCandidato}}\",\n  \"senha\": \"senha-invalida-qualquer\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', function () { pm.response.to.have.status(401); });",
+                  "pm.test('mensagem', function () { pm.expect(pm.response.json().erro).to.eql('E-mail ou senha inválidos.'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastro de candidato (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/cadastro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"perfil\": \"candidato\",\n  \"nome\": \"Candidato Postman\",\n  \"email\": \"{{emailNovo}}\",\n  \"senha\": \"{{senha}}\",\n  \"telefone\": \"83988887777\",\n  \"whatsapp\": \"83988887777\",\n  \"areaInteresse\": \"comercio\",\n  \"cidadeId\": 1,\n  \"bairroId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Defina emailNovo com um e-mail unico (ex.: postman_<timestamp>@teste.com) antes de enviar."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cadastro de empresa (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/cadastro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"perfil\": \"empresa\",\n  \"nome\": \"Empresa Postman Ltda\",\n  \"cnpj\": \"{{cnpjNovo}}\",\n  \"email\": \"{{emailNovoEmpresa}}\",\n  \"senha\": \"{{senha}}\",\n  \"telefone\": \"8332710000\",\n  \"descricao\": \"Empresa ficticia.\",\n  \"setor\": \"comercio\",\n  \"cidadeId\": 1,\n  \"bairroId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "cnpjNovo deve ser um CNPJ valido e unico (somente digitos ou com pontuacao)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 - Localidades e vagas (candidato)",
+      "description": "",
+      "item": [
+        {
+          "name": "GET /localidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/localidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "localidades"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /vagas (sem filtros)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vagas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('total e itens', function () { const j = pm.response.json(); pm.expect(j.total).to.eql(j.itens.length); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /vagas (geolocalizacao)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vagas?lat={{lat}}&lng={{lng}}&raioKm={{raioKm}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "{{lat}}"
+                },
+                {
+                  "key": "lng",
+                  "value": "{{lng}}"
+                },
+                {
+                  "key": "raioKm",
+                  "value": "{{raioKm}}"
+                }
+              ]
+            },
+            "description": "Sugestao: lat=-6.8548, lng=-35.4902 (Centro de Guarabira), raioKm=2."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('itens tem distanciaKm <= raioKm', function () { const r = parseFloat(pm.environment.get('raioKm')); pm.response.json().itens.forEach(function (i) { pm.expect(i.distanciaKm).to.be.at.most(r); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /vagas (filtros)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vagas?area=comercio&contrato=clt&q=atendente",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas"
+              ],
+              "query": [
+                {
+                  "key": "area",
+                  "value": "comercio"
+                },
+                {
+                  "key": "contrato",
+                  "value": "clt"
+                },
+                {
+                  "key": "q",
+                  "value": "atendente"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /vagas/:id (detalhe)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vagas/{{vagaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas",
+                "{{vagaId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCandidato}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('campos do contrato', function () { pm.expect(pm.response.json()).to.include.keys('id','titulo','descricao','status','empresa','bairro','minhaCandidatura'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /vagas/:id/candidaturas (candidatar)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vagas/{{vagaId}}/candidaturas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas",
+                "{{vagaId}}",
+                "candidaturas"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCandidato}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set('candidaturaId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /candidaturas/minhas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/candidaturas/minhas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "candidaturas",
+                "minhas"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCandidato}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /empresas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/empresas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empresas"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /empresas/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/empresas/{{empresaId}}?lat={{lat}}&lng={{lng}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empresas",
+                "{{empresaId}}"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "{{lat}}"
+                },
+                {
+                  "key": "lng",
+                  "value": "{{lng}}"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 - Painel da empresa",
+      "description": "",
+      "item": [
+        {
+          "name": "POST /vagas (criar; salva vagaId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vagas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Vaga Postman {{$timestamp}}\",\n  \"descricao\": \"Descricao ficticia com mais de vinte caracteres.\",\n  \"requisitos\": \"Requisitos ficticios.\",\n  \"area\": \"comercio\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"cidadeId\": 1,\n  \"bairroId\": 1,\n  \"salario\": 1500.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set('vagaId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /vagas/:id (editar salario/status)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vagas/{{vagaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas",
+                "{{vagaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Vaga Postman editada\",\n  \"descricao\": \"Descricao ficticia com mais de vinte caracteres.\",\n  \"requisitos\": \"Requisitos ficticios.\",\n  \"area\": \"comercio\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"cidadeId\": 1,\n  \"bairroId\": 1,\n  \"salario\": 1600.0,\n  \"status\": \"aberta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "O PUT e' completo: envie todos os campos e o salario (omitir o salario o zera)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /empresa/vagas (painel)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/empresa/vagas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empresa",
+                "vagas"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /empresa/candidaturas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/empresa/candidaturas?vagaId={{vagaId}}&status=enviada",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empresa",
+                "candidaturas"
+              ],
+              "query": [
+                {
+                  "key": "vagaId",
+                  "value": "{{vagaId}}"
+                },
+                {
+                  "key": "status",
+                  "value": "enviada"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH /candidaturas/:id/status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/candidaturas/{{candidaturaId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "candidaturas",
+                "{{candidaturaId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"em_analise\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH status invalido (400)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/candidaturas/{{candidaturaId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "candidaturas",
+                "{{candidaturaId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"xyz\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 - Permissoes (esperado 401/403)",
+      "description": "",
+      "item": [
+        {
+          "name": "Candidatura sem token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/candidaturas/minhas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "candidaturas",
+                "minhas"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empresa acessando rota de candidato (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/candidaturas/minhas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "candidaturas",
+                "minhas"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenEmpresa}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Candidato acessando painel da empresa (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/empresa/vagas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "empresa",
+                "vagas"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCandidato}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Candidato criando vaga (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/vagas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vagas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Nao deveria criar\",\n  \"descricao\": \"Descricao ficticia com mais de vinte caracteres.\",\n  \"requisitos\": \"r\",\n  \"area\": \"comercio\",\n  \"contrato\": \"clt\",\n  \"regime\": \"presencial\",\n  \"turno\": \"manha\",\n  \"bairroId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCandidato}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 403', function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
