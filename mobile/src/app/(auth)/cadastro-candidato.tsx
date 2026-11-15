@@ -78,7 +78,20 @@ export default function CadastroCandidatoScreen() {
       </TouchableOpacity>
 
       {/* Título */}
-      <Text style={styles.title}>Cadastro de Candidato</Text>
+      <Text style={styles.title}>Criar conta</Text>
+
+      {/* Seletor de Tipo de Cadastro (Abas) */}
+      <View style={styles.switchContainer}>
+        <TouchableOpacity style={[styles.switchTab, styles.switchTabActive]} activeOpacity={1}>
+          <Text style={[styles.switchText, styles.switchTextActive]}>Candidato</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.switchTab} 
+          onPress={() => router.replace('/(auth)/cadastro-empresa' as any)}
+        >
+          <Text style={styles.switchText}>Empresa</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Card de Privacidade */}
       <View style={styles.privacyBox}>
@@ -251,6 +264,36 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#111827',
     marginBottom: 16,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#e2e8f0',
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 20,
+  },
+  switchTab: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  switchTabActive: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  switchText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748b',
+  },
+  switchTextActive: {
+    color: '#0b6643',
+    fontWeight: '700',
   },
   privacyBox: {
     flexDirection: 'row',
