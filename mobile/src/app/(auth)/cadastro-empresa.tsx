@@ -547,4 +547,4 @@ const styles = StyleSheet.create({
     color: '#0b6643',
     fontWeight: '700',
   },
-});cle
+});
