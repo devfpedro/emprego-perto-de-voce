@@ -87,7 +87,12 @@ def listar_vagas():
                 "area": vaga["area"],
                 "contrato": vaga["contrato"],
                 "empresa": {"id": vaga["empresa_id"], "nome": vaga["empresa_nome"]},
-                "bairro": {"id": vaga["bairro_id"], "nome": vaga["bairro_nome"]},
+                "bairro": {
+                            "id": vaga["bairro_id"],
+                            "nome": vaga["bairro_nome"],
+                            "latitude": float(vaga["latitude"]),
+                            "longitude": float(vaga["longitude"])
+                            },
                 "distanciaKm": dist
             })
 
