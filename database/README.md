@@ -222,6 +222,32 @@ sudo docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_perto_de
 
 Mantenha os arquivos de backup em local seguro e não os envie ao Git.
 
+### Backup e restauração no Windows (PowerShell)
+
+Os comandos abaixo devem ser executados no PowerShell, na raiz do projeto, com o Docker Desktop em execução.
+
+#### Criar backup
+
+```powershell
+docker exec emprego-perto-db pg_dump -U emprego_user -d emprego_perto_de_voce -F c -f /tmp/emprego_perto.backup
+
+docker cp emprego-perto-db:/tmp/emprego_perto.backup .\database\emprego_perto.backup
+```
+
+O arquivo será salvo em `database\emprego_perto.backup`.
+
+#### Restaurar backup
+
+```powershell
+docker cp .\database\emprego_perto.backup emprego-perto-db:/tmp/emprego_perto.backup
+
+docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_perto_de_voce --clean --if-exists /tmp/emprego_perto.backup
+```
+
+**Atenção:** a opção `--clean` remove objetos existentes que serão restaurados. Utilize somente quando desejar substituir a estrutura e os dados atuais do banco.
+
+Mantenha os arquivos de backup em local seguro e não os envie ao Git.
+
 ## Observações
 
 - Os dados do `seed.sql` são fictícios e destinados exclusivamente a testes.
