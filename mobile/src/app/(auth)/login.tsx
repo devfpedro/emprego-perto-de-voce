@@ -1,17 +1,18 @@
+
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ActivityIndicator, 
-  ScrollView 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthService } from '../../service/api';
+import { AuthService, ApiError } from '../../service/api';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -19,7 +20,6 @@ export default function LoginScreen() {
   const [activeTab, setActiveTab] = useState<'entrar' | 'criar'>('entrar');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  
   const [loading, setLoading] = useState(false);
   const [erroEmail, setErroEmail] = useState(false);
   const [erroSenha, setErroSenha] = useState(false);
@@ -31,10 +31,12 @@ export default function LoginScreen() {
     setErroGeral('');
 
     let hasError = false;
+
     if (!email.trim() || !email.includes('@')) {
       setErroEmail(true);
       hasError = true;
     }
+
     if (!senha.trim()) {
       setErroSenha(true);
       hasError = true;
@@ -43,26 +45,14 @@ export default function LoginScreen() {
     if (hasError) return;
 
     setLoading(true);
-    try {
-      const response = await AuthService.login(email, senha);
-      console.log('Login efetuado com sucesso:', response.data);
-      
-      const { token, perfil, ...dadosUsuario } = response.data;
 
-      if (token) {
-        await AsyncStorage.setItem('@emprego_token', token);
-      }
-      await AsyncStorage.setItem('@emprego_perfil', perfil || 'candidato');
-      
-      await AsyncStorage.setItem('@emprego_user_data', JSON.stringify({
-        nome: dadosUsuario.nome || 'Pedro Henrique',
-        email: email,
-        telefone: dadosUsuario.telefone || '(83) 99999-0000',
-        areaInteresse: dadosUsuario.areaInteresse || 'Alimentação',
-        cidade: dadosUsuario.cidade || 'João Pessoa',
-        bairro: dadosUsuario.bairro || 'Centro',
-        ...dadosUsuario
-      }));
+    try {
+      const response = await AuthService.login(email.trim(), senha);
+      const { token, perfil, usuario } = response.data;
+
+      await AsyncStorage.setItem('@emprego_token', token);
+      await AsyncStorage.setItem('@emprego_perfil', perfil);
+      await AsyncStorage.setItem('@emprego_user_data', JSON.stringify(usuario));
 
       if (perfil === 'empresa') {
         router.replace('/(empresa)/vagas');
@@ -70,7 +60,11 @@ export default function LoginScreen() {
         router.replace('/(candidato)/mapa');
       }
     } catch (error) {
-      setErroGeral('E-mail ou senha inválidos. Tente novamente.');
+      if (error instanceof ApiError) {
+        setErroGeral(error.message);
+      } else {
+        setErroGeral('Não foi possível conectar ao servidor. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,6 +72,7 @@ export default function LoginScreen() {
 
   function handleTabSwitch(tab: 'entrar' | 'criar') {
     setActiveTab(tab);
+
     if (tab === 'criar') {
       router.push('/(auth)/cadastro-candidato');
     }
@@ -104,7 +99,7 @@ export default function LoginScreen() {
         ) : null}
 
         <View style={styles.segmentContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.segmentButton, activeTab === 'entrar' && styles.segmentActive]}
             onPress={() => handleTabSwitch('entrar')}
           >
@@ -113,7 +108,7 @@ export default function LoginScreen() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.segmentButton, activeTab === 'criar' && styles.segmentActive]}
             onPress={() => handleTabSwitch('criar')}
           >
@@ -125,7 +120,7 @@ export default function LoginScreen() {
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>E-mail</Text>
-          <TextInput 
+          <TextInput
             style={[styles.input, erroEmail && styles.inputError]}
             placeholder="voce@email.com"
             placeholderTextColor="#9ca3af"
@@ -139,7 +134,7 @@ export default function LoginScreen() {
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Senha</Text>
-          <TextInput 
+          <TextInput
             style={[styles.input, erroSenha && styles.inputError]}
             placeholder="Sua senha"
             placeholderTextColor="#9ca3af"
@@ -150,7 +145,7 @@ export default function LoginScreen() {
           {erroSenha && <Text style={styles.errorText}>Informe sua senha.</Text>}
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.submitButton, loading && styles.submitButtonLoading]}
           onPress={handleLogin}
           disabled={loading}

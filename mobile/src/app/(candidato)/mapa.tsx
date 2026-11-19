@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,97 +7,423 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
+  ActivityIndicator,
+  Alert,
+  Linking,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker, Region } from 'react-native-maps';
+import * as Location from 'expo-location';
 import ModalFiltros from '../../components/ModalFiltros';
 import { ApiService } from '../../service/api';
 
 const CATEGORIAS = ['Todas', 'Alimentação', 'Comércio', 'Saúde'];
 
+const AREAS: Record<string, string> = {
+  Alimentação: 'alimentacao',
+  Comércio: 'comercio',
+  Saúde: 'saude',
+  'Serviços Gerais': 'servicos_gerais',
+  Educação: 'educacao',
+};
+
+const CONTRATOS: Record<string, string> = {
+  CLT: 'clt',
+  'Meio Período': 'meio_periodo',
+  Temporário: 'temporario',
+  Estágio: 'estagio',
+};
+
+const REGIAO_PADRAO: Region = {
+  latitude: -6.8548,
+  longitude: -35.4902,
+  latitudeDelta: 0.06,
+  longitudeDelta: 0.06,
+};
+
+type Coordenadas = {
+  latitude: number;
+  longitude: number;
+};
+
+type Vaga = {
+  id: number;
+  titulo: string;
+  area: string;
+  contrato: string;
+  empresa: {
+    id: number;
+    nome: string;
+  };
+  bairro: {
+    id: number;
+    nome: string;
+    latitude: number | string;
+    longitude: number | string;
+  };
+  distanciaKm: number;
+};
+
+type GrupoVagas = {
+  chave: string;
+  latitude: number;
+  longitude: number;
+  vagas: Vaga[];
+};
+
 export default function MapaScreen() {
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [busca, setBusca] = useState('');
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todas');
-  const [empresas, setEmpresas] = useState<any[]>([]);
-  const [empresaSelecionada, setEmpresaSelecionada] = useState<any>(null);
-  
+  const [vagas, setVagas] = useState<Vaga[]>([]);
+  const [vagaSelecionada, setVagaSelecionada] = useState<Vaga | null>(null);
+  const [indiceVagaLocal, setIndiceVagaLocal] = useState(0);
   const [modalFiltrosVisible, setModalFiltrosVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [localizacaoNegada, setLocalizacaoNegada] = useState(false);
+  const [localizacaoAtual, setLocalizacaoAtual] = useState<Coordenadas | null>(null);
+  const [regiao, setRegiao] = useState<Region>(REGIAO_PADRAO);
+  const [erro, setErro] = useState('');
 
-  useEffect(() => {
-    carregarDadosMapa();
-  }, []);
+  const [filtros, setFiltros] = useState({
+    areasSelecionadas: [] as string[],
+    contratosSelecionados: [] as string[],
+    distancia: 10,
+    tipoVisualizacao: 'Vagas',
+  });
 
-  async function carregarDadosMapa() {
+  const carregarVagas = useCallback(async (
+    distancia = filtros.distancia,
+    coordenadas: Coordenadas | null = localizacaoAtual,
+  ) => {
     try {
       setLoading(true);
-      const response = await ApiService.get('/empresas');
-      setEmpresas(response.data);
-      if (response.data && response.data.length > 0) {
-        setEmpresaSelecionada(response.data[0]);
+      setErro('');
+
+      const parametros = [
+        `raioKm=${encodeURIComponent(String(distancia))}`,
+      ];
+
+      if (coordenadas) {
+        parametros.push(`lat=${encodeURIComponent(String(coordenadas.latitude))}`);
+        parametros.push(`lng=${encodeURIComponent(String(coordenadas.longitude))}`);
+      }
+
+      const response = await ApiService.get(`/vagas?${parametros.join('&')}`);
+
+      const itens = Array.isArray(response.data?.itens)
+        ? response.data.itens
+        : [];
+
+      const vagasValidas = itens.filter((vaga: Vaga) => {
+        const latitude = Number(vaga.bairro?.latitude);
+        const longitude = Number(vaga.bairro?.longitude);
+
+        return (
+          Number.isFinite(latitude) &&
+          Number.isFinite(longitude) &&
+          latitude >= -90 &&
+          latitude <= 90 &&
+          longitude >= -180 &&
+          longitude <= 180
+        );
+      });
+
+      setVagas(vagasValidas);
+
+      setVagaSelecionada((atual) => {
+        if (atual) {
+          const vagaAtualizada = vagasValidas.find(
+            (vaga: Vaga) => vaga.id === atual.id,
+          );
+
+          if (vagaAtualizada) return vagaAtualizada;
+        }
+
+        return vagasValidas[0] || null;
+      });
+
+      if (vagasValidas.length > 0) {
+        const primeiraVaga = vagasValidas[0];
+
+        setRegiao((atual) => {
+          if (coordenadas) {
+            return {
+              latitude: coordenadas.latitude,
+              longitude: coordenadas.longitude,
+              latitudeDelta: 0.04,
+              longitudeDelta: 0.04,
+            };
+          }
+
+          return {
+            ...atual,
+            latitude: Number(primeiraVaga.bairro.latitude),
+            longitude: Number(primeiraVaga.bairro.longitude),
+          };
+        });
       }
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao carregar vagas do mapa:', error);
+      setErro('Não foi possível carregar as vagas. Verifique sua conexão.');
+      setVagas([]);
+      setVagaSelecionada(null);
     } finally {
       setLoading(false);
     }
-  }
+  }, [filtros.distancia, localizacaoAtual]);
 
-  const empresasFiltradas = empresas.filter((emp) => {
-    const matchCategoria = categoriaAtiva === 'Todas' || emp.categoria === categoriaAtiva;
-    const matchBusca =
-      emp.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      emp.categoria.toLowerCase().includes(busca.toLowerCase());
-    return matchCategoria && matchBusca;
-  });
+  const obterLocalizacao = useCallback(async () => {
+    try {
+      setLocalizacaoNegada(false);
 
-  const semResultados = !loading && empresasFiltradas.length === 0;
+      const permissao = await Location.requestForegroundPermissionsAsync();
+
+      if (permissao.status !== 'granted') {
+        setLocalizacaoNegada(true);
+        setLocalizacaoAtual(null);
+        await carregarVagas(filtros.distancia, null);
+        return;
+      }
+
+      const posicaoAnterior = await Location.getLastKnownPositionAsync();
+
+      if (posicaoAnterior) {
+        const coordenadasAnteriores = {
+          latitude: posicaoAnterior.coords.latitude,
+          longitude: posicaoAnterior.coords.longitude,
+        };
+
+        setLocalizacaoAtual(coordenadasAnteriores);
+
+        setRegiao({
+          ...coordenadasAnteriores,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        });
+
+        await carregarVagas(filtros.distancia, coordenadasAnteriores);
+      } else {
+        await carregarVagas(filtros.distancia, null);
+      }
+
+      Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+        .then((posicao) => {
+          const coordenadas = {
+            latitude: posicao.coords.latitude,
+            longitude: posicao.coords.longitude,
+          };
+
+          setLocalizacaoAtual(coordenadas);
+
+          setRegiao({
+            ...coordenadas,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
+          });
+
+          carregarVagas(filtros.distancia, coordenadas);
+        })
+        .catch((error) => {
+          console.error('Não foi possível atualizar a localização:', error);
+        });
+    } catch (error) {
+      console.error('Erro ao obter localização:', error);
+      setLocalizacaoNegada(true);
+      await carregarVagas(filtros.distancia, null);
+    }
+  }, [carregarVagas, filtros.distancia]);
+
+  useEffect(() => {
+    obterLocalizacao();
+  }, []);
+
+  const vagasFiltradas = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+
+    return vagas.filter((vaga) => {
+      const area = String(vaga.area || '').toLowerCase();
+      const contrato = String(vaga.contrato || '').toLowerCase();
+      const nomeEmpresa = String(vaga.empresa?.nome || '').toLowerCase();
+      const titulo = String(vaga.titulo || '').toLowerCase();
+      const bairro = String(vaga.bairro?.nome || '').toLowerCase();
+
+      const categoriaSelecionada = categoriaAtiva === 'Todas'
+        || area === AREAS[categoriaAtiva];
+
+      const areasSelecionadas = filtros.areasSelecionadas.map(
+        (item) => AREAS[item] || item.toLowerCase(),
+      );
+
+      const contratosSelecionados = filtros.contratosSelecionados.map(
+        (item) => CONTRATOS[item] || item.toLowerCase(),
+      );
+
+      const correspondeArea = areasSelecionadas.length === 0
+        || areasSelecionadas.includes(area);
+
+      const correspondeContrato = contratosSelecionados.length === 0
+        || contratosSelecionados.includes(contrato);
+
+      const correspondeBusca = !termo
+        || titulo.includes(termo)
+        || nomeEmpresa.includes(termo)
+        || bairro.includes(termo)
+        || area.includes(termo);
+
+      return categoriaSelecionada
+        && correspondeArea
+        && correspondeContrato
+        && correspondeBusca;
+    });
+  }, [vagas, busca, categoriaAtiva, filtros]);
+
+  const gruposVagas = useMemo(() => {
+    const grupos = new Map<string, GrupoVagas>();
+
+    vagasFiltradas.forEach((vaga) => {
+      const latitude = Number(vaga.bairro.latitude);
+      const longitude = Number(vaga.bairro.longitude);
+      const chave = `${latitude.toFixed(6)}_${longitude.toFixed(6)}`;
+
+      if (!grupos.has(chave)) {
+        grupos.set(chave, {
+          chave,
+          latitude,
+          longitude,
+          vagas: [],
+        });
+      }
+
+      grupos.get(chave)!.vagas.push(vaga);
+    });
+
+    return Array.from(grupos.values());
+  }, [vagasFiltradas]);
+
+  const grupoSelecionado = useMemo(() => {
+    if (!vagaSelecionada) return null;
+
+    const chave = `${Number(vagaSelecionada.bairro.latitude).toFixed(6)}_${Number(vagaSelecionada.bairro.longitude).toFixed(6)}`;
+
+    return gruposVagas.find((grupo) => grupo.chave === chave) || null;
+  }, [vagaSelecionada, gruposVagas]);
+
+  const selecionarGrupo = (grupo: GrupoVagas) => {
+    setIndiceVagaLocal(0);
+    setVagaSelecionada(grupo.vagas[0]);
+
+    setRegiao((atual) => ({
+      ...atual,
+      latitude: grupo.latitude,
+      longitude: grupo.longitude,
+    }));
+  };
+
+  const navegarVagaLocal = () => {
+    if (!grupoSelecionado || grupoSelecionado.vagas.length <= 1) return;
+
+    const proximoIndice = (indiceVagaLocal + 1) % grupoSelecionado.vagas.length;
+
+    setIndiceVagaLocal(proximoIndice);
+    setVagaSelecionada(grupoSelecionado.vagas[proximoIndice]);
+  };
+
+  const aplicarFiltros = (filtrosAplicados: any) => {
+    const novosFiltros = {
+      areasSelecionadas: filtrosAplicados.areasSelecionadas || [],
+      contratosSelecionados: filtrosAplicados.contratosSelecionados || [],
+      distancia: Number(filtrosAplicados.distancia) || 10,
+      tipoVisualizacao: filtrosAplicados.tipoVisualizacao || 'Vagas',
+    };
+
+    setFiltros(novosFiltros);
+    setModalFiltrosVisible(false);
+    carregarVagas(novosFiltros.distancia, localizacaoAtual);
+  };
+
+  const formatarDistancia = (distancia: number) => {
+    const valor = Number(distancia);
+
+    if (!Number.isFinite(valor)) return 'Distância indisponível';
+
+    return `${valor.toFixed(1).replace('.', ',')} km`;
+  };
+
+  const nomeArea = (area: string) => {
+    const encontrada = Object.entries(AREAS).find(
+      ([, valor]) => valor === area,
+    );
+
+    return encontrada?.[0] || area;
+  };
+
+  const semResultados = !loading && vagasFiltradas.length === 0;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.mapBackground}>
-        <View style={styles.gridOverlay} />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <MapView
+        style={StyleSheet.absoluteFill}
+        region={regiao}
+        onRegionChangeComplete={setRegiao}
+        showsUserLocation={!!localizacaoAtual}
+        showsMyLocationButton={false}
+        showsCompass
+        loadingEnabled
+      >
+        {gruposVagas.map((grupo) => {
+          const selecionado = grupoSelecionado?.chave === grupo.chave;
 
-        {!loading && !semResultados && (
-          <View style={styles.userRadiusCircle}>
-            <View style={styles.userDot} />
-          </View>
-        )}
-
-        {!loading &&
-          empresasFiltradas.map((emp) => {
-            const isSelected = empresaSelecionada?.id === emp.id;
-            return (
-              <TouchableOpacity
-                key={emp.id}
+          return (
+            <Marker
+              key={grupo.chave}
+              coordinate={{
+                latitude: grupo.latitude,
+                longitude: grupo.longitude,
+              }}
+              onPress={() => selecionarGrupo(grupo)}
+              tracksViewChanges={false}
+            >
+              <View
                 style={[
-                  styles.mapPin,
-                  { top: emp.top || '40%', left: emp.left || '50%' },
-                  isSelected && styles.mapPinSelected,
+                  styles.mapMarker,
+                  selecionado && styles.mapMarkerSelected,
                 ]}
-                onPress={() => setEmpresaSelecionada(emp)}
               >
                 <Ionicons
-                  name="briefcase-outline"
-                  size={13}
-                  color={isSelected ? '#ffffff' : '#0b6643'}
+                  name="briefcase"
+                  size={15}
+                  color={selecionado ? '#ffffff' : '#0b6643'}
                 />
-                <Text style={[styles.mapPinText, isSelected && styles.mapPinTextSelected]}>
-                  {emp.vagasCount} {emp.vagasCount === 1 ? 'vaga' : 'vagas'}
+                <Text
+                  style={[
+                    styles.mapMarkerText,
+                    selecionado && styles.mapMarkerTextSelected,
+                  ]}
+                >
+                  {grupo.vagas.length}
                 </Text>
-              </TouchableOpacity>
-            );
-          })}
-      </View>
+              </View>
+            </Marker>
+          );
+        })}
+      </MapView>
 
       <View style={styles.topOverlay}>
         <View style={styles.searchRow}>
           <View style={styles.searchInputContainer}>
-            <Ionicons name="search-outline" size={18} color="#6b7280" style={styles.searchIcon} />
+            <Ionicons
+              name="search-outline"
+              size={18}
+              color="#6b7280"
+              style={styles.searchIcon}
+            />
+
             <TextInput
               style={styles.searchInput}
               placeholder="Buscar vagas, empresas ou área..."
@@ -104,6 +431,7 @@ export default function MapaScreen() {
               value={busca}
               onChangeText={setBusca}
             />
+
             {busca.length > 0 && (
               <TouchableOpacity onPress={() => setBusca('')}>
                 <Ionicons name="close-circle" size={18} color="#9ca3af" />
@@ -111,7 +439,7 @@ export default function MapaScreen() {
             )}
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setModalFiltrosVisible(true)}
           >
@@ -124,76 +452,157 @@ export default function MapaScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.categoriesContainer}
         >
-          {CATEGORIAS.map((cat) => {
-            const isActive = categoriaAtiva === cat;
+          {CATEGORIAS.map((categoria) => {
+            const ativa = categoriaAtiva === categoria;
+
             return (
               <TouchableOpacity
-                key={cat}
-                style={[styles.categoryChip, isActive && styles.categoryChipActive]}
-                onPress={() => setCategoriaAtiva(cat)}
+                key={categoria}
+                style={[
+                  styles.categoryChip,
+                  ativa && styles.categoryChipActive,
+                ]}
+                onPress={() => setCategoriaAtiva(categoria)}
               >
-                <Text style={[styles.categoryText, isActive && styles.categoryTextActive]}>
-                  {cat}
+                <Text
+                  style={[
+                    styles.categoryText,
+                    ativa && styles.categoryTextActive,
+                  ]}
+                >
+                  {categoria}
                 </Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
 
-        {semResultados && (
-          <View style={styles.alertError}>
-            <Text style={styles.alertErrorText}>
-              Nenhuma vaga encontrada nesta região ou busca.
+        {localizacaoNegada && (
+          <View style={styles.alertInfo}>
+            <Ionicons name="information-circle-outline" size={17} color="#0b6643" />
+            <Text style={styles.alertInfoText}>
+              Localização não autorizada. Usando o bairro cadastrado no seu perfil, quando disponível.
             </Text>
           </View>
         )}
 
-        {localizacaoNegada && !semResultados && (
-          <View style={styles.alertInfo}>
-            <Ionicons name="lock-closed-outline" size={16} color="#0b6643" />
-            <Text style={styles.alertInfoText}>
-              Acesso à localização negado. Mostrando o centro do bairro cadastrado no seu perfil.
+        {erro !== '' && (
+          <View style={styles.alertError}>
+            <Text style={styles.alertErrorText}>{erro}</Text>
+          </View>
+        )}
+
+        {semResultados && erro === '' && (
+          <View style={styles.alertError}>
+            <Text style={styles.alertErrorText}>
+              Nenhuma vaga encontrada com os filtros selecionados.
             </Text>
           </View>
         )}
       </View>
 
-      <View style={styles.bottomOverlay}>
+      <View
+        style={[
+          styles.bottomOverlay,
+          { bottom: Math.max(insets.bottom, 12) },
+        ]}
+      >
         <View style={styles.locateButtonWrapper}>
           <TouchableOpacity
             style={styles.locateButton}
-            onPress={() => setLocalizacaoNegada(!localizacaoNegada)}
+            onPress={async () => {
+              if (localizacaoNegada) {
+                const permissao = await Location.getForegroundPermissionsAsync();
+
+                if (permissao.status === 'denied' && !permissao.canAskAgain) {
+                  Alert.alert(
+                    'Permissão de localização',
+                    'A localização está bloqueada. Você pode autorizá-la nas configurações do aplicativo.',
+                    [
+                      { text: 'Cancelar', style: 'cancel' },
+                      {
+                        text: 'Abrir configurações',
+                        onPress: () => Linking.openSettings(),
+                      },
+                    ],
+                  );
+                  return;
+                }
+              }
+
+              await obterLocalizacao();
+            }}
           >
-            <Ionicons name="locate-outline" size={20} color="#111827" />
+            <Ionicons name="locate-outline" size={21} color="#111827" />
           </TouchableOpacity>
         </View>
 
-        {!loading && !semResultados && empresaSelecionada && (
+        {loading && (
+          <View style={styles.loadingCard}>
+            <ActivityIndicator size="small" color="#0b6643" />
+            <Text style={styles.loadingText}>Carregando vagas...</Text>
+          </View>
+        )}
+
+        {!loading && vagaSelecionada && (
           <View style={styles.companyCard}>
             <View style={styles.companyHeader}>
               <View style={styles.avatarBox}>
-                <Text style={styles.avatarText}>{empresaSelecionada.iniciais}</Text>
+                <Ionicons name="briefcase-outline" size={22} color="#92400e" />
               </View>
 
               <View style={styles.companyInfo}>
-                <Text style={styles.companyName}>{empresaSelecionada.nome}</Text>
-                <Text style={styles.companyMeta}>
-                  {empresaSelecionada.categoria} · {empresaSelecionada.bairro?.nome || empresaSelecionada.bairro} · {empresaSelecionada.distancia || '0,4 km'}
+                <Text style={styles.companyName} numberOfLines={1}>
+                  {vagaSelecionada.titulo}
+                </Text>
+
+                <Text style={styles.companyMeta} numberOfLines={2}>
+                  {vagaSelecionada.empresa.nome} · {vagaSelecionada.bairro.nome}
                 </Text>
               </View>
             </View>
 
-            <View style={styles.phoneRow}>
-              <Ionicons name="call-outline" size={14} color="#6b7280" />
-              <Text style={styles.phoneText}>{empresaSelecionada.telefone}</Text>
+            <View style={styles.detailsInfo}>
+              <View style={styles.infoItem}>
+                <Ionicons name="pricetag-outline" size={14} color="#6b7280" />
+                <Text style={styles.infoText}>
+                  {nomeArea(vagaSelecionada.area)}
+                </Text>
+              </View>
+
+              <View style={styles.infoItem}>
+                <Ionicons name="location-outline" size={14} color="#6b7280" />
+                <Text style={styles.infoText}>
+                  {formatarDistancia(vagaSelecionada.distanciaKm)}
+                </Text>
+              </View>
             </View>
 
-            <TouchableOpacity
-              style={styles.detailsButton}
-              onPress={() => router.push(`/(candidato)/empresa/${String(empresaSelecionada.id)}` as any)}
+            {grupoSelecionado && grupoSelecionado.vagas.length > 1 && (
+              <TouchableOpacity
+                style={styles.nextVacancyButton}
+                onPress={navegarVagaLocal}
+              >
+                <Ionicons name="swap-horizontal-outline" size={15} color="#0b6643" />
+                <Text style={styles.nextVacancyText}>
+                  Ver outra vaga neste local ({grupoSelecionado.vagas.length})
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <Link
+              href={{
+                pathname: '/(candidato)/empresa/[id]',
+                params: { id: String(vagaSelecionada.id) },
+              }}
+              asChild
             >
-              <Text style={styles.detailsButtonText}>Ver vagas e detalhes</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.detailsButton}>
+                <Text style={styles.detailsButtonText}>
+                  Testar abertura dos detalhes
+                </Text>
+              </TouchableOpacity>
+            </Link>
           </View>
         )}
       </View>
@@ -201,9 +610,7 @@ export default function MapaScreen() {
       <ModalFiltros
         visible={modalFiltrosVisible}
         onClose={() => setModalFiltrosVisible(false)}
-        onApply={(filtrosAplicados) => {
-          console.log(filtrosAplicados);
-        }}
+        onApply={aplicarFiltros}
       />
     </SafeAreaView>
   );
@@ -214,72 +621,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e5ebe7',
   },
-  mapBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#dde3df',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  gridOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.3,
-  },
-  userRadiusCircle: {
-    width: 170,
-    height: 170,
-    borderRadius: 85,
-    backgroundColor: 'rgba(11, 102, 67, 0.12)',
-    borderWidth: 1,
-    borderColor: '#0b6643',
-    borderStyle: 'dashed',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 60,
-  },
-  userDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#1d4ed8',
-    borderWidth: 2,
-    borderColor: '#ffffff',
-  },
-  mapPin: {
-    position: 'absolute',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  mapPinSelected: {
-    backgroundColor: '#0b6643',
-  },
-  mapPinText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  mapPinTextSelected: {
-    color: '#ffffff',
-  },
   topOverlay: {
-    paddingTop: 16,
+    paddingTop: 4,
     paddingHorizontal: 16,
   },
   searchRow: {
@@ -347,6 +690,30 @@ const styles = StyleSheet.create({
   categoryTextActive: {
     color: '#0b6643',
   },
+  mapMarker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderWidth: 2,
+    borderColor: '#0b6643',
+    elevation: 4,
+  },
+  mapMarkerSelected: {
+    backgroundColor: '#0b6643',
+    borderColor: '#ffffff',
+  },
+  mapMarkerText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0b6643',
+  },
+  mapMarkerTextSelected: {
+    color: '#ffffff',
+  },
   alertError: {
     backgroundColor: '#fee2e2',
     paddingVertical: 10,
@@ -378,7 +745,6 @@ const styles = StyleSheet.create({
   },
   bottomOverlay: {
     position: 'absolute',
-    bottom: 16,
     left: 16,
     right: 16,
   },
@@ -399,6 +765,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  loadingCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    padding: 18,
+    elevation: 5,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: '#374151',
+    fontWeight: '600',
+  },
   companyCard: {
     backgroundColor: '#ffffff',
     borderRadius: 18,
@@ -412,7 +793,7 @@ const styles = StyleSheet.create({
   companyHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   avatarBox: {
     width: 44,
@@ -423,11 +804,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
-  avatarText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#92400e',
-  },
   companyInfo: {
     flex: 1,
   },
@@ -435,21 +811,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111827',
-    marginBottom: 2,
+    marginBottom: 3,
   },
   companyMeta: {
     fontSize: 12,
     color: '#6b7280',
   },
-  phoneRow: {
+  detailsInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 14,
+    flexWrap: 'wrap',
+    gap: 14,
+    marginBottom: 12,
   },
-  phoneText: {
-    fontSize: 13,
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  infoText: {
+    fontSize: 12,
     color: '#4b5563',
+  },
+  nextVacancyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 9,
+    marginBottom: 10,
+    backgroundColor: '#e6f4ea',
+    borderRadius: 10,
+  },
+  nextVacancyText: {
+    color: '#0b6643',
+    fontSize: 12,
+    fontWeight: '600',
   },
   detailsButton: {
     backgroundColor: '#0b6643',

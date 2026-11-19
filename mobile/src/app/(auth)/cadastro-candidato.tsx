@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,33 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiService, AuthService, ApiError } from '../../service/api';
+
+const AREAS = [
+  { label: 'Alimentação', value: 'alimentacao' },
+  { label: 'Comércio', value: 'comercio' },
+  { label: 'Saúde', value: 'saude' },
+  { label: 'Serviços Gerais', value: 'servicos_gerais' },
+  { label: 'Educação', value: 'educacao' },
+];
+
+type Bairro = {
+  id: number;
+  nome: string;
+  latitude: number;
+  longitude: number;
+};
+
+type Cidade = {
+  id: number;
+  nome: string;
+  bairros: Bairro[];
+};
 
 export default function CadastroCandidatoScreen() {
   const router = useRouter();
@@ -22,51 +46,195 @@ export default function CadastroCandidatoScreen() {
   const [telefone, setTelefone] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [areaInteresse, setAreaInteresse] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [bairro, setBairro] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
+  const [localidades, setLocalidades] = useState<Cidade[]>([]);
+  const [cidadeId, setCidadeId] = useState<number | null>(null);
+  const [bairroId, setBairroId] = useState<number | null>(null);
+
+  const [modalAberto, setModalAberto] = useState(false);
+  const [tipoSelecao, setTipoSelecao] = useState<'area' | 'cidade' | 'bairro'>('area');
+
   const [loading, setLoading] = useState(false);
+  const [loadingLocalidades, setLoadingLocalidades] = useState(true);
+  const [erro, setErro] = useState('');
   const [erroEmail, setErroEmail] = useState(false);
-  const [msgErroEmail, setMsgErroEmail] = useState('');
   const [erroSenha, setErroSenha] = useState(false);
   const [erroConfirmacao, setErroConfirmacao] = useState(false);
 
+  useEffect(() => {
+    carregarLocalidades();
+  }, []);
+
+  async function carregarLocalidades() {
+    try {
+      const response = await ApiService.get('/localidades');
+
+      if (Array.isArray(response.data)) {
+        setLocalidades(response.data);
+
+        if (response.data.length > 0) {
+          const primeiraCidade = response.data[0];
+
+          setCidadeId(primeiraCidade.id);
+          setBairroId(primeiraCidade.bairros?.[0]?.id ?? null);
+        }
+      }
+    } catch {
+      setErro('Não foi possível carregar as cidades e bairros.');
+    } finally {
+      setLoadingLocalidades(false);
+    }
+  }
+
+  const cidadeAtual = localidades.find((cidade) => cidade.id === cidadeId);
+  const bairrosDisponiveis = cidadeAtual?.bairros ?? [];
+
+  const areaSelecionada = AREAS.find(
+    (area) => area.value === areaInteresse
+  )?.label;
+
+  const cidadeSelecionada = cidadeAtual?.nome;
+
+  const bairroSelecionado = bairrosDisponiveis.find(
+    (bairro) => bairro.id === bairroId
+  )?.nome;
+
+  function abrirSelecao(tipo: 'area' | 'cidade' | 'bairro') {
+    setTipoSelecao(tipo);
+    setModalAberto(true);
+  }
+
+  function selecionarOpcao(valor: any) {
+    if (tipoSelecao === 'area') {
+      setAreaInteresse(valor);
+    }
+
+    if (tipoSelecao === 'cidade') {
+      const cidade = localidades.find((item) => item.id === valor);
+
+      setCidadeId(valor);
+      setBairroId(cidade?.bairros?.[0]?.id ?? null);
+    }
+
+    if (tipoSelecao === 'bairro') {
+      setBairroId(valor);
+    }
+
+    setModalAberto(false);
+  }
+
+  function obterOpcoes() {
+    if (tipoSelecao === 'area') {
+      return AREAS.map((item) => ({
+        label: item.label,
+        value: item.value,
+      }));
+    }
+
+    if (tipoSelecao === 'cidade') {
+      return localidades.map((item) => ({
+        label: item.nome,
+        value: item.id,
+      }));
+    }
+
+    return bairrosDisponiveis.map((item) => ({
+      label: item.nome,
+      value: item.id,
+    }));
+  }
+
   async function handleCadastro() {
+    setErro('');
     setErroEmail(false);
-    setMsgErroEmail('');
     setErroSenha(false);
     setErroConfirmacao(false);
 
     let hasError = false;
 
+    if (nome.trim().length < 3) {
+      setErro('Informe seu nome completo.');
+      hasError = true;
+    }
+
     if (!email.trim() || !email.includes('@')) {
       setErroEmail(true);
-      setMsgErroEmail('Informe um e-mail válido.');
+      setErro('Informe um e-mail válido.');
+      hasError = true;
+    }
+
+    if (telefone.replace(/\D/g, '').length < 10) {
+      setErro('Informe um telefone com DDD.');
+      hasError = true;
+    }
+
+    if (!areaInteresse) {
+      setErro('Selecione sua área de interesse.');
+      hasError = true;
+    }
+
+    if (!cidadeId || !bairroId) {
+      setErro('Selecione sua cidade e seu bairro.');
       hasError = true;
     }
 
     if (senha.length < 8) {
       setErroSenha(true);
+      setErro('A senha deve ter no mínimo 8 caracteres.');
       hasError = true;
     }
 
     if (senha !== confirmarSenha) {
       setErroConfirmacao(true);
+      setErro('As senhas não coincidem.');
       hasError = true;
     }
 
     if (hasError) return;
 
-    setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Candidato cadastrado com sucesso!');
+      setLoading(true);
 
-      router.replace('/(candidato)/mapa');
+      const payload = {
+        perfil: 'candidato',
+        nome: nome.trim(),
+        email: email.trim().toLowerCase(),
+        senha,
+        telefone: telefone.replace(/\D/g, ''),
+        whatsapp: whatsapp.replace(/\D/g, ''),
+        areaInteresse,
+        cidadeId,
+        bairroId,
+      };
+
+      await ApiService.post('/auth/cadastro', payload);
+
+      const response = await AuthService.login(
+        email.trim().toLowerCase(),
+        senha
+      );
+
+      const { token, perfil, usuario } = response.data;
+
+      await AsyncStorage.setItem('@emprego_token', token);
+      await AsyncStorage.setItem('@emprego_perfil', perfil);
+      await AsyncStorage.setItem(
+        '@emprego_user_data',
+        JSON.stringify(usuario)
+      );
+
+      router.replace('/(candidato)/mapa' as any);
     } catch (error) {
-      console.error('Erro ao cadastrar', error);
+      if (error instanceof ApiError && error.status === 409) {
+        setErroEmail(true);
+        setErro('Este e-mail já está em uso');
+      } else if (error instanceof ApiError) {
+        setErro(error.message);
+      } else {
+        setErro('Não foi possível realizar o cadastro. Verifique sua conexão.');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,9 +246,11 @@ export default function CadastroCandidatoScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        {/* Cabeçalho (igual ao da Empresa) */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
             <Ionicons name="arrow-back" size={20} color="#111827" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Criar conta</Text>
@@ -91,11 +261,16 @@ export default function CadastroCandidatoScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Seletor de Tipo de Cadastro (Abas) */}
           <View style={styles.switchContainer}>
-            <TouchableOpacity style={[styles.switchTab, styles.switchTabActive]} activeOpacity={1}>
-              <Text style={[styles.switchText, styles.switchTextActive]}>Candidato</Text>
+            <TouchableOpacity
+              style={[styles.switchTab, styles.switchTabActive]}
+              activeOpacity={1}
+            >
+              <Text style={[styles.switchText, styles.switchTextActive]}>
+                Candidato
+              </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.switchTab}
               onPress={() => router.replace('/(auth)/cadastro-empresa' as any)}
@@ -104,15 +279,24 @@ export default function CadastroCandidatoScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Card de Privacidade */}
           <View style={styles.privacyBox}>
-            <Ionicons name="lock-closed-outline" size={18} color="#0b6643" style={styles.privacyIcon} />
+            <Ionicons
+              name="lock-closed-outline"
+              size={18}
+              color="#0b6643"
+              style={styles.privacyIcon}
+            />
             <Text style={styles.privacyText}>
               Seus dados ficam protegidos. Só mostramos a região aproximada.
             </Text>
           </View>
 
-          {/* Campo: Nome completo */}
+          {erro ? (
+            <View style={styles.errorBanner}>
+              <Text style={styles.errorBannerText}>{erro}</Text>
+            </View>
+          ) : null}
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Nome completo</Text>
             <TextInput
@@ -124,7 +308,6 @@ export default function CadastroCandidatoScreen() {
             />
           </View>
 
-          {/* Campo: E-mail */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>E-mail</Text>
             <TextInput
@@ -136,10 +319,8 @@ export default function CadastroCandidatoScreen() {
               value={email}
               onChangeText={setEmail}
             />
-            {erroEmail && <Text style={styles.errorText}>{msgErroEmail}</Text>}
           </View>
 
-          {/* Campo: Telefone */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Telefone</Text>
             <TextInput
@@ -152,7 +333,6 @@ export default function CadastroCandidatoScreen() {
             />
           </View>
 
-          {/* Campo: WhatsApp (opcional) */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>WhatsApp (opcional)</Text>
             <TextInput
@@ -165,43 +345,49 @@ export default function CadastroCandidatoScreen() {
             />
           </View>
 
-          {/* Campo: Área de interesse */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Área de interesse</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Selecione uma área"
-              placeholderTextColor="#9ca3af"
-              value={areaInteresse}
-              onChangeText={setAreaInteresse}
-            />
+            <TouchableOpacity
+              style={styles.select}
+              onPress={() => abrirSelecao('area')}
+            >
+              <Text style={areaSelecionada ? styles.selectText : styles.placeholder}>
+                {areaSelecionada || 'Selecione uma área'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color="#64748b" />
+            </TouchableOpacity>
           </View>
 
-          {/* Campo: Cidade */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Cidade</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Selecione a cidade"
-              placeholderTextColor="#9ca3af"
-              value={cidade}
-              onChangeText={setCidade}
-            />
+            <TouchableOpacity
+              style={styles.select}
+              disabled={loadingLocalidades || localidades.length === 0}
+              onPress={() => abrirSelecao('cidade')}
+            >
+              <Text style={cidadeSelecionada ? styles.selectText : styles.placeholder}>
+                {loadingLocalidades
+                  ? 'Carregando cidades...'
+                  : cidadeSelecionada || 'Selecione a cidade'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color="#64748b" />
+            </TouchableOpacity>
           </View>
 
-          {/* Campo: Bairro */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Bairro</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Selecione o bairro"
-              placeholderTextColor="#9ca3af"
-              value={bairro}
-              onChangeText={setBairro}
-            />
+            <TouchableOpacity
+              style={styles.select}
+              disabled={!cidadeId || bairrosDisponiveis.length === 0}
+              onPress={() => abrirSelecao('bairro')}
+            >
+              <Text style={bairroSelecionado ? styles.selectText : styles.placeholder}>
+                {bairroSelecionado || 'Selecione o bairro'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color="#64748b" />
+            </TouchableOpacity>
           </View>
 
-          {/* Campo: Senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Senha</Text>
             <TextInput
@@ -212,10 +398,13 @@ export default function CadastroCandidatoScreen() {
               value={senha}
               onChangeText={setSenha}
             />
-            {erroSenha && <Text style={styles.errorText}>A senha deve ter no mínimo 8 caracteres.</Text>}
+            {erroSenha && (
+              <Text style={styles.errorText}>
+                A senha deve ter no mínimo 8 caracteres.
+              </Text>
+            )}
           </View>
 
-          {/* Campo: Confirmação de senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirmação de senha</Text>
             <TextInput
@@ -226,14 +415,17 @@ export default function CadastroCandidatoScreen() {
               value={confirmarSenha}
               onChangeText={setConfirmarSenha}
             />
-            {erroConfirmacao && <Text style={styles.errorText}>As senhas não coincidem.</Text>}
+            {erroConfirmacao && (
+              <Text style={styles.errorText}>
+                As senhas não coincidem.
+              </Text>
+            )}
           </View>
 
-          {/* Botão Cadastrar */}
           <TouchableOpacity
             style={[styles.submitButton, loading && styles.submitButtonLoading]}
             onPress={handleCadastro}
-            disabled={loading}
+            disabled={loading || loadingLocalidades}
           >
             {loading ? (
               <ActivityIndicator size="small" color="#ffffff" />
@@ -242,12 +434,53 @@ export default function CadastroCandidatoScreen() {
             )}
           </TouchableOpacity>
 
-          {/* Link de Retorno ao Login */}
-          <TouchableOpacity style={styles.footerLink} onPress={() => router.back()}>
-            <Text style={styles.footerText}>Já tem uma conta? <Text style={styles.footerTextBold}>Entrar</Text></Text>
+          <TouchableOpacity
+            style={styles.footerLink}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.footerText}>
+              Já tem uma conta?{' '}
+              <Text style={styles.footerTextBold}>Entrar</Text>
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <Modal
+        visible={modalAberto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalAberto(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {tipoSelecao === 'area'
+                  ? 'Selecione uma área'
+                  : tipoSelecao === 'cidade'
+                    ? 'Selecione uma cidade'
+                    : 'Selecione um bairro'}
+              </Text>
+              <TouchableOpacity onPress={() => setModalAberto(false)}>
+                <Ionicons name="close" size={24} color="#111827" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView>
+              {obterOpcoes().map((opcao) => (
+                <TouchableOpacity
+                  key={opcao.value}
+                  style={styles.option}
+                  onPress={() => selecionarOpcao(opcao.value)}
+                >
+                  <Text style={styles.optionText}>{opcao.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -353,6 +586,25 @@ const styles = StyleSheet.create({
     color: '#111827',
     backgroundColor: '#ffffff',
   },
+  select: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  selectText: {
+    fontSize: 14,
+    color: '#111827',
+  },
+  placeholder: {
+    fontSize: 14,
+    color: '#9ca3af',
+  },
   inputError: {
     borderColor: '#ef4444',
   },
@@ -360,6 +612,16 @@ const styles = StyleSheet.create({
     color: '#ef4444',
     fontSize: 12,
     marginTop: 4,
+  },
+  errorBanner: {
+    backgroundColor: '#fee2e2',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 16,
+  },
+  errorBannerText: {
+    color: '#b91c1c',
+    fontSize: 13,
   },
   submitButton: {
     backgroundColor: '#0b6643',
@@ -388,5 +650,37 @@ const styles = StyleSheet.create({
   footerTextBold: {
     color: '#0b6643',
     fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  option: {
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  optionText: {
+    fontSize: 15,
+    color: '#374151',
   },
 });
