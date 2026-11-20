@@ -1,0 +1,81 @@
+# =========================================
+# GERAL
+# =========================================
+
+# Backups do banco de dados (nunca versionar)
+*.backup
+
+# Variaveis de ambiente (segredos e senhas)
+.env
+.env*.local
+
+# Sistema operacional
+.DS_Store
+
+# Logs
+*.log
+
+# =========================================
+# BACKEND (Python / Flask)
+# =========================================
+
+# Ambiente virtual
+venv/
+env/
+ENV/
+.venv/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Editor e IDEs
+/backend/.vscode/
+/backend/.idea/
+*.swp
+*.swo
+
+# =========================================
+# MOBILE (Expo / React Native)
+# =========================================
+
+# Dependencias
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Certificados
+*.pem
+
+# TypeScript
+*.tsbuildinfo
+
+# Exemplo local
+mobile/**/example
+
+# Pastas nativas geradas
+/mobile/ios
+/mobile/android

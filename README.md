@@ -120,7 +120,7 @@ O banco será iniciado com as seguintes configurações:
 
 Na primeira inicialização, o Docker executa automaticamente os scripts `schema.sql` (tabelas, índices, funções e triggers) e `seed.sql` (dados fictícios de demonstração). **Não é necessário executá-los manualmente.**
 
-**Observação:** esses scripts rodam somente quando o volume do banco é criado pela primeira vez. Nas próximas inicializações, os dados existentes são preservados. O arquivo `indexes.sql` está reservado para índices adicionais e não faz parte da inicialização.
+**Observação:** esses scripts rodam somente quando o volume do banco é criado pela primeira vez. Nas próximas inicializações, os dados existentes são preservados.
 
 Para recriar o banco do zero, apagando todos os dados do ambiente de testes:
 
