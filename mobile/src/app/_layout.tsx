@@ -10,61 +10,94 @@ export default function RootLayout() {
   const segments = useSegments();
   const [carregando, setCarregando] = useState(true);
 
+  const rotaAtual = segments[0];
+
   useEffect(() => {
-    verificarSessao();
-  }, []);
+    let ativo = true;
 
-  async function verificarSessao() {
-    try {
-      const token = await AsyncStorage.getItem('@emprego_token');
-      const perfil = await AsyncStorage.getItem('@emprego_perfil');
+    async function verificarSessao() {
+      try {
+        const token = await AsyncStorage.getItem('@emprego_token');
+        const perfil = await AsyncStorage.getItem('@emprego_perfil');
 
-      const emAreaAutenticada =
-        segments[0] === '(candidato)' || segments[0] === '(empresa)';
+        if (!ativo || !rotaAtual) return;
 
-      if (token) {
-        if (segments[0] === '(auth)' || !segments[0]) {
-          if (perfil === 'empresa') {
-            router.replace('/(empresa)/vagas');
-          } else {
-            router.replace('/(candidato)/mapa');
+        const emAreaAutenticada =
+          rotaAtual === '(candidato)' || rotaAtual === '(empresa)';
+
+        if (!token) {
+          if (emAreaAutenticada) {
+            router.replace('/(auth)/login' as any);
           }
+          return;
         }
-      } else if (emAreaAutenticada) {
-        router.replace('/(auth)/login' as any);
-      }
-    } catch (e) {
-      console.error('Erro ao verificar sessão:', e);
-    } finally {
-      setCarregando(false);
-    }
-  }
 
-  if (carregando) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0b6643" />
-      </View>
-    );
-  }
+        if (perfil === 'empresa') {
+          if (rotaAtual !== '(empresa)') {
+            router.replace('/(empresa)/vagas' as any);
+          }
+          return;
+        }
+
+        if (perfil === 'candidato') {
+          if (rotaAtual !== '(candidato)') {
+            router.replace('/(candidato)/mapa' as any);
+          }
+          return;
+        }
+
+        await AsyncStorage.multiRemove([
+          '@emprego_token',
+          '@emprego_perfil',
+          '@emprego_user_data',
+        ]);
+
+        router.replace('/(auth)/login' as any);
+      } catch (erro) {
+        console.error('Erro ao verificar sessão:', erro);
+      } finally {
+        if (ativo) setCarregando(false);
+      }
+    }
+
+    if (rotaAtual) {
+      void verificarSessao();
+    }
+
+    return () => {
+      ativo = false;
+    };
+  }, [rotaAtual, router]);
 
   return (
     <SafeAreaProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(candidato)" />
-        <Stack.Screen name="(empresa)" />
-      </Stack>
+      <View style={styles.appContainer}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(candidato)" />
+          <Stack.Screen name="(empresa)" />
+        </Stack>
+
+        {carregando && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0b6643" />
+          </View>
+        )}
+      </View>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  appContainer: {
     flex: 1,
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',
+    zIndex: 1,
   },
 });
