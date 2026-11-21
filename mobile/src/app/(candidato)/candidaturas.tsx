@@ -68,19 +68,27 @@ export default function MinhasCandidaturasScreen() {
     }
   }
 
-  function formatarData(dataStr: string) {
-    if (!dataStr) return '';
+// D14: interpreta datas sem horário no fuso local para evitar exibir o dia anterior.
+function formatarData(dataStr: string) {
+  if (!dataStr) return '';
 
-    try {
-      const data = new Date(dataStr);
+  try {
+    const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dataStr);
+    const data = partes
+      ? new Date(
+          Number(partes[1]),
+          Number(partes[2]) - 1,
+          Number(partes[3]),
+        )
+      : new Date(dataStr);
 
-      if (Number.isNaN(data.getTime())) return '';
+    if (Number.isNaN(data.getTime())) return '';
 
-      return `Enviada em ${data.toLocaleDateString('pt-BR')}`;
-    } catch {
-      return '';
-    }
+    return `Enviada em ${data.toLocaleDateString('pt-BR')}`;
+  } catch {
+    return '';
   }
+}
 
   const semResultados = !loading && candidaturasFiltradas.length === 0;
 
