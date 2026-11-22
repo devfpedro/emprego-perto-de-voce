@@ -1,56 +1,64 @@
-# Welcome to your Expo app 👋
+# Emprego Perto de Você — Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile para candidatos encontrarem vagas próximas e empresas gerenciarem vagas e candidaturas. O app usa Expo, React Native e Expo Router.
 
-## Get started
+## Requisitos
 
-1. Install dependencies
+- Node.js e npm
+- Expo Go instalado no Android ou iPhone
+- Backend e banco de dados do projeto em execução
 
-   ```bash
-   npm install
-   ```
+## Configurar o endereço do backend
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Na pasta `mobile`, crie o arquivo local `.env` a partir do exemplo:
 
 ```bash
-npm run reset-project
+cp .env.example .env
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Edite `EXPO_PUBLIC_API_URL` em `.env` para usar o endereço IP do computador onde o backend está rodando:
 
-### Other setup steps
+```env
+EXPO_PUBLIC_API_URL=http://IP_DO_COMPUTADOR:8000
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Ao usar um celular físico, conecte o computador e o celular à mesma rede Wi-Fi e não use `localhost`: esse endereço apontaria para o próprio celular. O backend está configurado para escutar na porta `8000`.
 
-## Learn more
+## Iniciar banco e backend
 
-To learn more about developing your project with Expo, look at the following resources:
+Na raiz do repositório, inicie o PostgreSQL:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+docker compose -f database/docker-compose.yml up -d
+```
 
-## Join the community
+Configure as variáveis de ambiente do backend conforme [`backend/.env.example`](../backend/.env.example) e as instruções em [`database/README.md`](../database/README.md). Em seguida, inicie o backend:
 
-Join our community of developers creating universal apps.
+```bash
+cd backend
+source .venv/bin/activate
+python3 run.py
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Instalar e iniciar o app
+
+Na pasta `mobile`, instale as dependências e inicie o Expo:
+
+```bash
+npm ci
+npx expo start
+```
+
+Escaneie o QR code do terminal com o Expo Go. Se alterou a configuração ou o bundler estiver usando cache antigo, inicie com:
+
+```bash
+npx expo start -c
+```
+
+## Testar no navegador
+
+O app também pode abrir no navegador com `npx expo start --web`, mas a tela do mapa usa `react-native-maps`, que depende de componentes nativos. Para testar o mapa, abra o projeto pelo Expo Go em Android ou iOS.
+
+## Contas de demonstração
+
+O banco disponibiliza contas fictícias para teste. Consulte a lista de e-mails e a senha em [`database/README.md`](../database/README.md).
