@@ -27,20 +27,20 @@ INSERT INTO bairros (cidade_id, nome, latitude, longitude) VALUES
 -- USUARIOS
 -- Senha de todas as contas: Teste@1234
 INSERT INTO usuarios (perfil, email, senha_hash, telefone) VALUES
-('candidato', 'candidato1@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990001'),
-('candidato', 'candidato2@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990002'),
-('candidato', 'candidato3@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990003'),
-('candidato', 'candidato4@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990004'),
-('candidato', 'candidato5@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990005'),
-('candidato', 'candidato6@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990006'),
-('candidato', 'candidato7@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990007'),
-('candidato', 'candidato8@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990008'),
-('empresa', 'empresa1@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990009'),
-('empresa', 'empresa2@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990010'),
-('empresa', 'empresa3@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990011'),
-('empresa', 'empresa4@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990012'),
-('empresa', 'empresa5@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990013'),
-('empresa', 'empresa6@email.com', 'scrypt:32768:8:1$N8P2pMq1LVBZOeQT$db721c9b9c10c1068aa0aa0cb6c5af1a96a4f213ec38a294fbae8b4bd49284b9118a9b8a814d1f43cc039d843f3c2c7acfd19707ac99a85e45a49dd496ec8dd1', '83999990014');
+('candidato', 'candidato1@email.com', 'scrypt:32768:8:1$CsKiXWXvDTLJmNQy$d643d8f1d40db554567b916e5ed0fe00d455b0781eecffe3d622428b9cabc837ec198ca5b6f5499b340734f4fdde4059be32dcfa6b114171cfc58521573c215a', '83999990001'),
+('candidato', 'candidato2@email.com', 'scrypt:32768:8:1$OH8oYdzhWvzM9brW$14d7bf6f27b08f46fa53ff63aa3cf4385461c353ca123ceb255cf2fa411d6cf7f933e41de63aff33f8bdd16e0aa288bb1cf7d528a626f0359ff12f42240324c4', '83999990002'),
+('candidato', 'candidato3@email.com', 'scrypt:32768:8:1$jYjrMiZTaOeEMfsd$15cc9b6da74962d887c7435a4a6351c79c9191c05aca5dd9197819980b6bf967999dc72c3acfd1a2d82e6cd869c45b3a46df699abd052cd68e595ddacbb8094a', '83999990003'),
+('candidato', 'candidato4@email.com', 'scrypt:32768:8:1$smDZ4c3Yh16YTS4e$7ada10221a6c31dd0de015e9e9b51514d6cc47480f28b01de984bc1683a1ff4c1dc719f8304d2d84d518342a0fadf4812ac5feedfab43bcf3b0dd37c8eb6209f', '83999990004'),
+('candidato', 'candidato5@email.com', 'scrypt:32768:8:1$V3cLREGT2So1y5Q7$22eccd9c79d48a58097646308b62c1a55eda6ddd3d1e14a80a7914758582abab51dbc7c51b67f67ad1adf9b49d0b5455c454e19af55674328823d155382658e3', '83999990005'),
+('candidato', 'candidato6@email.com', 'scrypt:32768:8:1$TbfFI4g15AkEYOIM$61524a0d31cd8e59751b517ae7ef4f7084f451187e24115a062fd1b3af35c616d09fecb3e2e3cebfffc8746a6a415b8602af3589f7309eafe7d3aa4c5f834efe', '83999990006'),
+('candidato', 'candidato7@email.com', 'scrypt:32768:8:1$TmpmL3oyWc7sxbrf$6bc910b538655de0c1ebdd49839707ed8cf48982a397352e7469c90c1067e40cab34348d23090ff0f551be21e82be1d2c4054e02158529b146ca9a56bd3cfae5', '83999990007'),
+('candidato', 'candidato8@email.com', 'scrypt:32768:8:1$Jnrak8CZazAawkYQ$69c86380b9f97ea6772f915ac5aa3f7500397e941b834b2eed8755cd81013d2df10617a7cc618ca10e483d8d9d683edbcb0f902fdcb5e3428574b9d754b1c19e', '83999990008'),
+('empresa', 'empresa1@email.com', 'scrypt:32768:8:1$a9HzzB10eH5dAm92$d5ff434db5e1c0722bbbb18f40c34885af1c786b0925a73fcdf2de78e99dae247cae1de1c04a5c718131e9c3e6278f23a9103b7a4bf9dff9e6f8400e4268913d', '83999990009'),
+('empresa', 'empresa2@email.com', 'scrypt:32768:8:1$cVMf1xtmvRP1CdrO$cff833ac84f67f1a771355750648332cca9248a1a8c802d25039a78828d240bd2336be480e96b158c524efd8702403f07dbf7f8da529dfc0908e4f5392c7b61b', '83999990010'),
+('empresa', 'empresa3@email.com', 'scrypt:32768:8:1$Neau9v1zFzrZNiDO$4d6e6459c719429f45f72e461d3d4cb298f8daf6b2992094340ef0d9ee0f143b32dd852e1af276582dc12f9a38f773ff11edec6aa5a56d21c9882248c396a80e', '83999990011'),
+('empresa', 'empresa4@email.com', 'scrypt:32768:8:1$MVjFFm5KeDQg4sYl$d020c6e4b472aa5e6009d4c4ffef91921822fe0dd3c86016698f256e1ef93e70f208e6c1950a27bd56c0fb05b763ed16aec9e34801844223ea122af5d5f0c1d7', '83999990012'),
+('empresa', 'empresa5@email.com', 'scrypt:32768:8:1$H2VUekXUeRH9jMHN$9aba4544a2552758561352b1310691f8b35734da64b6af65d5ddc1e3aa842a8ec9c10a41217481cd252d6a10f8ce9a9df079f0fd1a1c04927a67567d6fa2e09d', '83999990013'),
+('empresa', 'empresa6@email.com', 'scrypt:32768:8:1$u3srjhT1WmBYFpmI$83ccf2dad8e0e49572a798ef59f248604d7778df3cc044685ab2cdc93509d1d969ff9268709725e961d99e49f7d100a53075f4252974f38deb67bcf1629b9336', '83999990014');
 
 -- CANDIDATOS
 INSERT INTO candidatos (

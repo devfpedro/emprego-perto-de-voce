@@ -16,7 +16,6 @@ Este diretório contém os arquivos responsáveis pela criação, configuração
 | `schema.sql` | Criação das tabelas, relacionamentos, restrições, funções, triggers e índices. |
 | `seed.sql` | Inserção de dados fictícios para demonstração e testes. |
 | `reset.sql` | Limpeza dos dados e reinicialização dos identificadores. |
-| `indexes.sql` | Arquivo reservado para índices adicionais. |
 | `docker-compose.yml` | Configuração do ambiente PostgreSQL com PostGIS. |
 | `DER.md` | Documentação do diagrama entidade-relacionamento. |
 
@@ -211,14 +210,22 @@ O arquivo será salvo em `database/emprego_perto.backup`, fora do container.
 
 ### Restaurar backup
 
-Para restaurar o backup em um banco existente:
+Restaure sempre primeiro em um banco temporário (sem remover nem sobrescrever objetos do banco em uso):
 
 ```bash
 sudo docker cp ./database/emprego_perto.backup emprego-perto-db:/tmp/emprego_perto.backup
-sudo docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_perto_de_voce --clean --if-exists /tmp/emprego_perto.backup
+sudo docker exec emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -c "CREATE DATABASE emprego_restore_teste;"
+sudo docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_restore_teste /tmp/emprego_perto.backup
+sudo docker exec emprego-perto-db psql -U emprego_user -d emprego_restore_teste -c "SELECT (SELECT count(*) FROM usuarios) AS usuarios, (SELECT count(*) FROM candidatos) AS candidatos, (SELECT count(*) FROM empresas) AS empresas, (SELECT count(*) FROM vagas) AS vagas, (SELECT count(*) FROM candidaturas) AS candidaturas;"
 ```
 
-**Atenção:** a opção `--clean` remove os objetos existentes que serão restaurados. Utilize somente quando desejar substituir a estrutura e os dados atuais.
+Compare as contagens do banco temporário com as do banco original (`-d emprego_perto_de_voce`). Só depois de conferir, decida se o banco temporário será descartado ou se o backup substituirá o banco em uso (faça um novo backup antes de qualquer substituição).
+
+Para descartar o banco temporário:
+
+```bash
+sudo docker exec emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -c "DROP DATABASE emprego_restore_teste;"
+```
 
 Mantenha os arquivos de backup em local seguro e não os envie ao Git.
 
@@ -238,13 +245,25 @@ O arquivo será salvo em `database\emprego_perto.backup`.
 
 #### Restaurar backup
 
+Restaure sempre primeiro em um banco temporário (sem remover nem sobrescrever objetos do banco em uso):
+
 ```powershell
 docker cp .\database\emprego_perto.backup emprego-perto-db:/tmp/emprego_perto.backup
 
-docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_perto_de_voce --clean --if-exists /tmp/emprego_perto.backup
+docker exec emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -c "CREATE DATABASE emprego_restore_teste;"
+
+docker exec emprego-perto-db pg_restore -U emprego_user -d emprego_restore_teste /tmp/emprego_perto.backup
+
+docker exec emprego-perto-db psql -U emprego_user -d emprego_restore_teste -c "SELECT (SELECT count(*) FROM usuarios) AS usuarios, (SELECT count(*) FROM candidatos) AS candidatos, (SELECT count(*) FROM empresas) AS empresas, (SELECT count(*) FROM vagas) AS vagas, (SELECT count(*) FROM candidaturas) AS candidaturas;"
 ```
 
-**Atenção:** a opção `--clean` remove objetos existentes que serão restaurados. Utilize somente quando desejar substituir a estrutura e os dados atuais do banco.
+Compare as contagens do banco temporário com as do banco original (`-d emprego_perto_de_voce`). Só depois de conferir, decida se o banco temporário será descartado ou se o backup substituirá o banco em uso (faça um novo backup antes de qualquer substituição).
+
+Para descartar o banco temporário:
+
+```powershell
+docker exec emprego-perto-db psql -U emprego_user -d emprego_perto_de_voce -c "DROP DATABASE emprego_restore_teste;"
+```
 
 Mantenha os arquivos de backup em local seguro e não os envie ao Git.
 
