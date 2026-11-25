@@ -203,7 +203,7 @@ export default function CadastroCandidatoScreen() {
         email: email.trim().toLowerCase(),
         senha,
         telefone: telefone.replace(/\D/g, ''),
-        whatsapp: whatsapp.replace(/\D/g, ''),
+        whatsapp: whatsapp.replace(/\D/g, '') || null,
         areaInteresse,
         cidadeId,
         bairroId,
