@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export const unstable_settings = { initialRouteName: '(tabs)' };
+export const unstable_settings = { anchor: '(tabs)' };
 
 export default function CandidatoLayout() {
   return (
