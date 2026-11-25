@@ -16,8 +16,8 @@ import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
-import ModalFiltros from '../../components/ModalFiltros';
-import { ApiService } from '../../service/api';
+import ModalFiltros from '../../../components/ModalFiltros';
+import { ApiService } from '../../../service/api';
 
 const CATEGORIAS = ['Todas', 'Alimentação', 'Comércio', 'Saúde'];
 
