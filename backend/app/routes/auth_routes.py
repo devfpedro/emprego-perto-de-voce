@@ -48,7 +48,7 @@ def cadastro():
 
     if perfil == 'candidato':
         if not nome or not data.get('areaInteresse'):
-            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, whatsapp, areaInteresse).'}), 400
+            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, areaInteresse).'}), 400
     elif perfil == 'empresa':
         if not nome or not data.get('cnpj') or not data.get('setor'):
             return jsonify({'erro': 'Campos obrigatórios da empresa ausentes (nome, cnpj, setor).'}), 400
