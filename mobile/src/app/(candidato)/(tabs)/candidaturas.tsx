@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { ApiService } from '../../service/api';
+import { ApiService } from '../../../service/api';
 
 const ABAS = ['Todas', 'Em andamento', 'Encerradas'];
 
