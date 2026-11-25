@@ -243,9 +243,7 @@ export default function PerfilScreen() {
   onPress={sair}
   activeOpacity={0.8}
 >
-<View style={styles.logoutTab}>
   <Text style={styles.logoutText}>Sair</Text>
-</View>
 </TouchableOpacity>
 
       </ScrollView>
