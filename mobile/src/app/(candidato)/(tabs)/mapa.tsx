@@ -16,8 +16,8 @@ import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Region } from 'react-native-maps';
 import * as Location from 'expo-location';
-import ModalFiltros from '../../components/ModalFiltros';
-import { ApiService } from '../../service/api';
+import ModalFiltros from '../../../components/ModalFiltros';
+import { ApiService } from '../../../service/api';
 
 const CATEGORIAS = ['Todas', 'Alimentação', 'Comércio', 'Saúde'];
 
@@ -599,7 +599,7 @@ export default function MapaScreen() {
             >
               <TouchableOpacity style={styles.detailsButton}>
                 <Text style={styles.detailsButtonText}>
-                  Testar abertura dos detalhes
+                  Detalhar vaga
                 </Text>
               </TouchableOpacity>
             </Link>
@@ -747,6 +747,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
+    zIndex: 10,
+    elevation: 10,
   },
   locateButtonWrapper: {
     alignItems: 'flex-end',

@@ -57,7 +57,7 @@ export default function LoginScreen() {
       if (perfil === 'empresa') {
         router.replace('/(empresa)/vagas');
       } else {
-        router.replace('/(candidato)/mapa');
+        router.replace('/(candidato)/(tabs)/mapa');
       }
     } catch (error) {
       if (error instanceof ApiError) {

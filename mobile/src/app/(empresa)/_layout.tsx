@@ -3,12 +3,16 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function EmpresaLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: '#28a745' }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#28a745',
+      }}
+    >
       <Tabs.Screen
         name="vagas"
         options={{
           title: 'Vagas',
-          headerTitle: 'Painel de Vagas',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="briefcase-outline" size={size} color={color as string} />
           ),
@@ -18,7 +22,6 @@ export default function EmpresaLayout() {
         name="candidatos"
         options={{
           title: 'Candidatos',
-          headerTitle: 'Candidatos Inscritos',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color as string} />
           ),

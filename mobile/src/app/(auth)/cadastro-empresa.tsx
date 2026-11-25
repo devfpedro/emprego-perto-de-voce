@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { ApiService } from '../../service/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiError, ApiService, AuthService } from '../../service/api';
 
 const SETORES = [
   { label: 'Alimentação', value: 'alimentacao' },
@@ -141,10 +142,22 @@ export default function CadastroEmpresaScreen() {
       };
 
       await ApiService.post('/auth/cadastro', payload);
-      router.replace('/(empresa)/painel' as any);
-    } catch (err: any) {
-      const mensagemErro = err?.response?.data?.erro || 'Erro ao realizar cadastro. Tente novamente.';
-      setErro(mensagemErro);
+      const respostaLogin = await AuthService.login(email.trim(), senha);
+      const { token, perfil, usuario } = respostaLogin.data;
+
+      await AsyncStorage.setItem('@emprego_token', token);
+      await AsyncStorage.setItem('@emprego_perfil', perfil);
+      await AsyncStorage.setItem('@emprego_user_data', JSON.stringify(usuario));
+
+      router.replace('/(empresa)/vagas' as any);
+      } catch (err) {
+      if (err instanceof ApiError) {
+        setErro(err.message);
+      } else if (err instanceof Error) {
+        setErro(err.message);
+      } else {
+        setErro('Erro ao realizar cadastro. Tente novamente.');
+      }
     } finally {
       setLoadingEnvio(false);
     }

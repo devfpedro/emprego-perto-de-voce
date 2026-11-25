@@ -24,8 +24,8 @@ export default function VagasScreen() {
   async function carregarVagasEmpresa() {
     try {
       setLoading(true);
-      const response = await ApiService.get('/empresas/vagas');
-      setVagas(Array.isArray(response.data) ? response.data : []);
+      const response = await ApiService.get('/empresa/vagas');
+      setVagas(Array.isArray(response.data?.itens) ? response.data.itens : []);
     } catch (error) {
       console.error(error);
     } finally {

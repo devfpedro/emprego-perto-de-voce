@@ -40,6 +40,20 @@ export default function PerfilScreen() {
     }
   }
 
+  async function sair() {
+    try {
+      await AsyncStorage.multiRemove([
+        '@emprego_token',
+        '@emprego_perfil',
+        '@emprego_user_data',
+      ]);
+
+      router.replace('/(auth)/login' as any);
+    } catch (erro) {
+      console.error('Erro ao sair:', erro);
+    }
+  }
+
   async function selecionarPdf() {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -159,6 +173,7 @@ export default function PerfilScreen() {
         <Text style={styles.sectionTitle}>Currículo (PDF, até 5 MB)</Text>
 
         <View style={styles.curriculoCard}>
+
           {erroUpload ? (
             <View style={styles.errorBanner}>
               <Text style={styles.errorBannerText}>{erroUpload}</Text>
@@ -222,6 +237,15 @@ export default function PerfilScreen() {
             </TouchableOpacity>
           )}
         </View>
+
+<TouchableOpacity
+  style={styles.logoutContainer}
+  onPress={sair}
+  activeOpacity={0.8}
+>
+  <Text style={styles.logoutText}>Sair</Text>
+</TouchableOpacity>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -406,4 +430,15 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#0b6643',
   },
+logoutContainer: {
+  alignSelf: 'center',
+  marginTop: 180,
+  padding: 4,
+  borderRadius: 12,
+},
+logoutText: {
+  color: '#ff0000',
+  fontSize: 16,
+  fontWeight: '700',
+},
 });
