@@ -76,6 +76,13 @@ def cadastro():
 
         area_interesse = area_interesse.strip()
 
+        whatsapp_raw = data.get('whatsapp')
+        whatsapp = re.sub(r'\D', '', whatsapp_raw) if isinstance(whatsapp_raw, str) else ''
+        whatsapp = whatsapp or None
+
+        if whatsapp and len(whatsapp) > 20:
+            return jsonify({'erro': 'WhatsApp inválido. Deve conter no máximo 20 dígitos.'}), 400
+
     if perfil == 'empresa':
         setor = data.get('setor')
 
@@ -112,7 +119,7 @@ def cadastro():
                     """, (
                         usuario_id,
                         nome,
-                        data.get('whatsapp'),
+                        whatsapp,
                         area_interesse,
                         bairroId
                     ))
