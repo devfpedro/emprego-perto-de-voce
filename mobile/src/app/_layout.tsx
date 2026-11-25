@@ -1,7 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -17,7 +19,8 @@ export default function RootLayout() {
       const token = await AsyncStorage.getItem('@emprego_token');
       const perfil = await AsyncStorage.getItem('@emprego_perfil');
 
-      const emAreaAutenticada = segments[0] === '(candidato)' || segments[0] === '(empresa)';
+      const emAreaAutenticada =
+        segments[0] === '(candidato)' || segments[0] === '(empresa)';
 
       if (token) {
         if (segments[0] === '(auth)' || !segments[0]) {
@@ -27,10 +30,8 @@ export default function RootLayout() {
             router.replace('/(candidato)/mapa');
           }
         }
-      } else {
-        if (emAreaAutenticada) {
-          router.replace('/(auth)/login' as any);
-        }
+      } else if (emAreaAutenticada) {
+        router.replace('/(auth)/login' as any);
       }
     } catch (e) {
       console.error('Erro ao verificar sessão:', e);
@@ -48,12 +49,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(candidato)" options={{ headerShown: false }} />
-      <Stack.Screen name="(empresa)" options={{ headerShown: false }} />
-    </Stack>
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(candidato)" />
+        <Stack.Screen name="(empresa)" />
+      </Stack>
+    </SafeAreaProvider>
   );
 }
 
