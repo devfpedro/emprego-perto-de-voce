@@ -599,7 +599,7 @@ export default function MapaScreen() {
             >
               <TouchableOpacity style={styles.detailsButton}>
                 <Text style={styles.detailsButtonText}>
-                  Testar abertura dos detalhes
+                  Detalhar vaga
                 </Text>
               </TouchableOpacity>
             </Link>
@@ -747,6 +747,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
+    zIndex: 10,
+    elevation: 10,
   },
   locateButtonWrapper: {
     alignItems: 'flex-end',
