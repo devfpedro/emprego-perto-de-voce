@@ -7,7 +7,8 @@
 
 # Variaveis de ambiente (segredos e senhas)
 .env
-.env*.local
+.env.*
+!.env.example
 
 # Sistema operacional
 .DS_Store
