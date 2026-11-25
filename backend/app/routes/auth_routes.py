@@ -48,7 +48,7 @@ def cadastro():
 
     if perfil == 'candidato':
         if not nome or not data.get('areaInteresse'):
-            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, whatsapp, areaInteresse).'}), 400
+            return jsonify({'erro': 'Campos obrigatórios do candidato ausentes (nome, areaInteresse).'}), 400
     elif perfil == 'empresa':
         if not nome or not data.get('cnpj') or not data.get('setor'):
             return jsonify({'erro': 'Campos obrigatórios da empresa ausentes (nome, cnpj, setor).'}), 400
@@ -75,6 +75,13 @@ def cadastro():
             return jsonify({'erro': 'Área de interesse inválida.'}), 400
 
         area_interesse = area_interesse.strip()
+
+        whatsapp_raw = data.get('whatsapp')
+        whatsapp = re.sub(r'\D', '', whatsapp_raw) if isinstance(whatsapp_raw, str) else ''
+        whatsapp = whatsapp or None
+
+        if whatsapp and len(whatsapp) > 20:
+            return jsonify({'erro': 'WhatsApp inválido. Deve conter no máximo 20 dígitos.'}), 400
 
     if perfil == 'empresa':
         setor = data.get('setor')
@@ -112,7 +119,7 @@ def cadastro():
                     """, (
                         usuario_id,
                         nome,
-                        data.get('whatsapp'),
+                        whatsapp,
                         area_interesse,
                         bairroId
                     ))
