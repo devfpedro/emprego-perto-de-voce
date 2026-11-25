@@ -1,9 +1,10 @@
-
 import { Stack } from 'expo-router';
+
+export const unstable_settings = { initialRouteName: '(tabs)' };
 
 export default function CandidatoLayout() {
   return (
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="empresa" />
     </Stack>
