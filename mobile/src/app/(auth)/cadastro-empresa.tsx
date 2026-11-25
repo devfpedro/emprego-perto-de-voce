@@ -141,7 +141,7 @@ export default function CadastroEmpresaScreen() {
         bairro: bairroTexto.trim(),
       };
 
-      
+      await ApiService.post('/auth/cadastro', payload);
       const respostaLogin = await AuthService.login(email.trim(), senha);
       const { token, perfil, usuario } = respostaLogin.data;
 
