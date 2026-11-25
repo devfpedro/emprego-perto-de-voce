@@ -1,5 +1,6 @@
+import math
 from flask import Blueprint, request, jsonify
-from app.utils import calcular_haversine
+from app.utils import calcular_haversine, obter_json_objeto
 from app.db import get_db_connection
 from app.auth import token_requerido, token_opcional
 from app.validators import AREAS_VALIDAS, CONTRATOS_VALIDOS, REGIMES_VALIDOS, TURNOS_VALIDOS, STATUS_VAGA_VALIDOS
@@ -158,7 +159,9 @@ def criar_vaga():
     if usuario['perfil'] != 'empresa':
         return jsonify({'erro': 'Apenas empresas podem criar vagas.'}), 403
 
-    data = request.get_json() or {}
+    data, erro = obter_json_objeto()
+    if erro:
+        return jsonify(erro[0]), erro[1]
     titulo = data.get('titulo', '')
     descricao = data.get('descricao', '')
     requisitos = data.get('requisitos', '')
@@ -193,7 +196,7 @@ def criar_vaga():
     if salario is not None:
         try:
             salario_float = float(salario)
-            if salario_float <= 0:
+            if not math.isfinite(salario_float) or salario_float <= 0:
                 return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
         except (ValueError, TypeError):
             return jsonify({'erro': 'O salário deve ser um valor numérico válido.'}), 400
@@ -223,7 +226,9 @@ def atualizar_vaga(vaga_id):
     if usuario['perfil'] != 'empresa':
         return jsonify({'erro': 'Acesso negado.'}), 403
 
-    data = request.get_json() or {}
+    data, erro = obter_json_objeto()
+    if erro:
+        return jsonify(erro[0]), erro[1]
     titulo = data.get('titulo', '')
     descricao = data.get('descricao', '')
     requisitos = data.get('requisitos', '')
@@ -235,11 +240,21 @@ def atualizar_vaga(vaga_id):
     salario = data.get('salario')
     status = str(data.get('status', '')).lower()
 
-    if len(titulo) < 5 or len(descricao) < 20 or not requisitos or not bairro_id:
+    if (
+        not isinstance(titulo, str) or len(titulo.strip()) < 5
+        or not isinstance(descricao, str) or len(descricao.strip()) < 20
+        or not isinstance(requisitos, str) or not requisitos.strip()
+        or not bairro_id
+    ):
         return jsonify({'erro': 'Dados obrigatórios inválidos.'}), 400
-    if area not in AREAS_VALIDAS or contrato not in CONTRATOS_VALIDOS or regime not in REGIMES_VALIDOS or turno not in TURNOS_VALIDOS or status not in STATUS_VAGA_VALIDOS:
+    if (
+        area not in AREAS_VALIDAS
+        or contrato not in CONTRATOS_VALIDOS
+        or regime not in REGIMES_VALIDOS
+        or turno not in TURNOS_VALIDOS
+        or status not in STATUS_VAGA_VALIDOS
+    ):
         return jsonify({'erro': 'Valores de enumeração inválidos fornecidos.'}), 400
-
     try:
         bairro_id_int = int(bairro_id)
     except (ValueError, TypeError):
@@ -249,7 +264,7 @@ def atualizar_vaga(vaga_id):
     if salario is not None:
         try:
             salario_float = float(salario)
-            if salario_float <= 0:
+            if math.isfinite(salario_float) or salario_float <= 0:
                 return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
         except (ValueError, TypeError):
             return jsonify({'erro': 'O salário deve ser um valor numérico válido.'}), 400

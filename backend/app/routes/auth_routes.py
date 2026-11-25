@@ -1,5 +1,6 @@
 
 import re
+from app.utils import obter_json_objeto
 from flask import Blueprint, request, jsonify
 from psycopg.errors import UniqueViolation
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,7 +20,9 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/cadastro', methods=['POST'])
 def cadastro():
-    data = request.get_json() or {}
+    data, erro = obter_json_objeto()
+    if erro:
+        return jsonify(erro[0]), erro[1]
     perfil = str(data.get('perfil', '')).lower()
 
     email_raw = data.get('email')
@@ -153,7 +156,9 @@ def cadastro():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json() or {}
+    data, erro = obter_json_objeto()
+    if erro:
+        return jsonify(erro[0]), erro[1]
 
     email_raw = data.get('email')
     email = email_raw.lower().strip() if isinstance(email_raw, str) else ''
