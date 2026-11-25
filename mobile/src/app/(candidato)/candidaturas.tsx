@@ -1,5 +1,5 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -18,9 +18,10 @@ export default function MinhasCandidaturasScreen() {
   const [loading, setLoading] = useState(true);
   const [abaAtiva, setAbaAtiva] = useState('Todas');
 
-  useEffect(() => {
-    carregarCandidaturas();
-  }, []);
+  useFocusEffect(useCallback(() => {
+      carregarCandidaturas();
+    }, []),
+  );
 
   async function carregarCandidaturas() {
     try {
