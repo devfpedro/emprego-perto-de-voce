@@ -264,7 +264,7 @@ def atualizar_vaga(vaga_id):
     if salario is not None:
         try:
             salario_float = float(salario)
-            if math.isfinite(salario_float) or salario_float <= 0:
+            if not math.isfinite(salario_float) or salario_float <= 0:
                 return jsonify({'erro': 'O salário deve ser maior que zero ou nulo.'}), 400
         except (ValueError, TypeError):
             return jsonify({'erro': 'O salário deve ser um valor numérico válido.'}), 400
