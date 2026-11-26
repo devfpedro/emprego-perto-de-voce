@@ -1,32 +1,25 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
 
 export default function EmpresaLayout() {
   return (
-    <Tabs
+    <Stack
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#28a745',
       }}
     >
-      <Tabs.Screen
-        name="vagas"
+      <Stack.Screen name="(tabs)" />
+
+      <Stack.Screen name="painel" />
+
+      <Stack.Screen
+        name="publicar-vaga"
         options={{
-          title: 'Vagas',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase-outline" size={size} color={color as string} />
-          ),
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
         }}
       />
-      <Tabs.Screen
-        name="candidatos"
-        options={{
-          title: 'Candidatos',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people-outline" size={size} color={color as string} />
-          ),
-        }}
-      />
-    </Tabs>
+
+      <Stack.Screen name="vaga/[id]" />
+    </Stack>
   );
 }

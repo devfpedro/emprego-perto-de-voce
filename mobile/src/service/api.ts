@@ -36,7 +36,9 @@ async function request(
 
   const headers = await getAuthHeaders(authenticated);
 
-  const response = await fetch(`${BASE_URL.replace(/\/$/, '')}${endpoint}`, {
+  const url = `${BASE_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
+
+  const response = await fetch(url, {
     method,
     headers,
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
